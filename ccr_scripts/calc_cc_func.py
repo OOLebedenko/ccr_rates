@@ -23,8 +23,10 @@ if __name__ == '__main__':
                 index = len(cross_corr)
 
             os.makedirs(out_dir, exist_ok=True)
-            pd.DataFrame({"time_ns": np.linspace(0, index * dt_ns, index), "crosscorr": cross_corr}).to_csv(
-                os.path.join(out_dir, out_name))
+            pd.DataFrame({
+                "time_ns": np.linspace(0, index * dt_ns, index, endpoint=False),
+                "crosscorr": cross_corr
+            }).to_csv(os.path.join(out_dir, out_name))
 
 
     parser = argparse.ArgumentParser(description='Extract vectors')
