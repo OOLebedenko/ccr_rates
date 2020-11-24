@@ -1,5 +1,5 @@
 from ccr_scripts.process_utils.calc_relaxation_rate import calc_dipole_interaction_const, \
-     calc_csa_axis_interaction_const, calc_remote_ccr_rates
+    calc_csa_axis_interaction_const, calc_remote_ccr_rates
 import argparse
 import os
 import pandas as pd
@@ -66,6 +66,8 @@ if __name__ == '__main__':
                  "z": 90e-6}
 
         for axis in ["x", "y", "z"]:
+            exactly_one_dipole_arg = (args.dipole_1 is None) ^ (args.dipole_2 is None)
+            assert exactly_one_dipole_arg, "Exactly one dipole argument is required in DD-CSA mode"
             if args.dipole_1:
                 interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
             elif args.dipole_2:
