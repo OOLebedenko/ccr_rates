@@ -3,7 +3,7 @@ from tqdm import tqdm
 import argparse
 import os
 from ccr_scripts.process_utils.select import get_CA_HA_selection, get_NH_selection, get_HA_HN_selection, \
-                                             get_CO_selection, get_C_CA_selection, SelectionShifter
+    get_CO_selection, get_C_CA_selection, SelectionShifter
 from ccr_scripts.process_utils.extract import OpenCsvAsVectorsExtractors, Run
 
 if __name__ == '__main__':
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     trj_reader_dict = {"dat": TrjtoolDatFile, "nc": AmberNetCDF, "xtc": GromacsXtcFile}
 
     traj = Trajectory(PdbFile(args.path_to_reference_pdb).frames()[0])
-    for ind in tqdm(range(1, args.trajectory_length), desc="traj_reading"):
+    for ind in tqdm(range(1, args.trajectory_length + 1), desc="traj_reading"):
         fname = "{pattern}.{filetype}".format(pattern=args.pattern, filetype=args.filetype)
         traj.extend(trj_reader_dict[args.filetype](os.path.join(args.path_to_trajectory, fname % (ind))))
 
