@@ -25,8 +25,8 @@ data/fit/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/${N_RES
 
 data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_cc_func.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect_csv-1=data/vectors/"${VECTOR_1}" \
-	    --path-to-vect_csv-2=data/vectors/"${VECTOR_2}" \
+	    --path-to-vect-csv-1=data/vectors/"${VECTOR_1}" \
+	    --path-to-vect-csv-2=data/vectors/"${VECTOR_2}" \
 	    --output-directory=data/crosscorr \
 
 

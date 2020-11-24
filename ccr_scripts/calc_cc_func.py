@@ -28,10 +28,10 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser(description='Extract vectors')
-    parser.add_argument('--path-to-vect_csv-1', required=True)
-    parser.add_argument('--path-to-vect_csv-2', required=True)
-    parser.add_argument('--shift_ind', default=0)
-    parser.add_argument('--ccr_func', default=crosscorr_all_harmonics)
+    parser.add_argument('--path-to-vect-csv-1', required=True)
+    parser.add_argument('--path-to-vect-csv-2', required=True)
+    parser.add_argument('--shift-ind', default=0)
+    parser.add_argument('--ccr-func', default=crosscorr_all_harmonics)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
