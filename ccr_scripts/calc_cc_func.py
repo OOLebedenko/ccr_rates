@@ -26,7 +26,7 @@ if __name__ == '__main__':
             pd.DataFrame({
                 "time_ns": np.linspace(0, index * dt_ns, index, endpoint=False),
                 "crosscorr": cross_corr
-            }).to_csv(os.path.join(out_dir, out_name))
+            }).to_csv(os.path.join(out_dir, out_name), index=False)
 
 
     parser = argparse.ArgumentParser(description='Extract vectors')
