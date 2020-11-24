@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--path-to-fit-dir', required=True, )
     parser.add_argument('--nmr-freq', required=True, type=float)
     parser.add_argument('--ccr-type', choices=["DD-DD", "DD-CSA"])
-    parser.add_argument('--dipole-1', choices=["NH", "CAHA"], default=None)
+    parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
     parser.add_argument('--dipole-2', choices=["NH", "CA_HA"], default=None)
     parser.add_argument('--csa-atoms', choices=["C"], default=None)
     parser.add_argument('--output-directory', default="./")
