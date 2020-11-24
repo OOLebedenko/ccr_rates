@@ -2,7 +2,7 @@ SCRIPT_DIR:=${HOME}/ccr_rates/ccr_scripts/ccr_scripts
 
 # MD traj parameters
 TRAJECTORY_PATH=${HOME}/bioinf/trj/ubq/tip4p-ew/NPT_bussi/bussi_box_8/5_run/
-REFENCE_PDB_PATH:=${TRAJECTORY_PATH}/run00001.pdb
+REFERENCE_PDB_PATH:=${TRAJECTORY_PATH}/run00001.pdb
 TRAJECTORY_LENGTH:=2
 FILETYPE:="dat"#type of MD run files "dat" - TrjtoolDatFile; "nc" - AmberNetCDF, "xtc" - GromacsXtcFile
 PATTERN:="run%05d"#pattern of MD run files: run00001.dat ---> "run%05d".dat

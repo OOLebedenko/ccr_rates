@@ -18,7 +18,7 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_ccr_rate.py data/fit/"${N_RESI
 data/fit/"${N_RESIDUES}"*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/"/${N_RESIDUES}"*.csv
     python3 "$<" \
         --path-to-crosscorr-csv=data/crosscorr \
-        --path-to-reference-pdb="${REFENCE_PDB_PATH}" \
+        --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
         --limit="${FIT_LIMIT}" \
         --output-directory=data/fit \
 
@@ -34,7 +34,7 @@ data/vectors/"${VECTOR_2}"/${N_RESIDUES}"*.csv: ${SCRIPT_DIR}/extract_vectors.py
     mkdir -p data/vectors/${VECTORS}
     python3 "$<" \
         --path-to-trajectory="${TRAJECTORY_PATH}" \
-        --path-to-reference-pdb="${REFENCE_PDB_PATH}" \
+        --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
         --filetype="${FILETYPE}" \
         --pattern="${PATTERN}" \
         --trajectory-length="${TRAJECTORY_LENGTH}" \
