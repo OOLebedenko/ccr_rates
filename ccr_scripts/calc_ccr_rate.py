@@ -50,16 +50,12 @@ if __name__ == '__main__':
              "y": 178e-6,
              "z": 90e-6}
 
-    dipole_dict = {"NH": [(gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"]), rNH],
-                   "CA_HA": [(gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]), rCAHA]}
+    dipole_dict = {"NH": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
+                   "CA_HA": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
 
     if args.ccr_type == "DD-DD":
-        interaction_const = calc_dipole_interaction_const(dipole_dict[args.dipole_1][0][0],
-                                                          dipole_dict[args.dipole_1][0][1],
-                                                          dipole_dict[args.dipole_1][1])
-        interaction_const *= calc_dipole_interaction_const(dipole_dict[args.dipole_2][0][0],
-                                                           dipole_dict[args.dipole_2][0][1],
-                                                           dipole_dict[args.dipole_2][1])
+        interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
+        interaction_const *= calc_dipole_interaction_const(*dipole_dict[args.dipole_2])
 
         get_remote_ccr_rate(args.path_to_fit_dir, interaction_const, output_directory=args.output_directory)
 
@@ -71,13 +67,9 @@ if __name__ == '__main__':
 
         for axis in ["x", "y", "z"]:
             if args.dipole_1:
-                interaction_const = calc_dipole_interaction_const(dipole_dict[args.dipole_1][0][0],
-                                                                  dipole_dict[args.dipole_1][0][1],
-                                                                  dipole_dict[args.dipole_1][1])
+                interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
             elif args.dipole_2:
-                interaction_const = calc_dipole_interaction_const(dipole_dict[args.dipole_2][0][0],
-                                                                  dipole_dict[args.dipole_2][0][1],
-                                                                  dipole_dict[args.dipole_2][1])
+                interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_2])
             interaction_const *= calc_csa_axis_interaction_const(gyromagnetic_ratio_dict["C13"], CSA_C[axis],
                                                                  args.nmr_freq)
             path_to_fit_dir = os.path.join(args.path_to_fit_dir, axis)
