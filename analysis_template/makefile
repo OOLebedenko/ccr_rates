@@ -23,7 +23,7 @@ data/fit/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/${N_RES
 	    --output-directory=data/fit \
 
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_cc_func.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-vect_csv-1=data/vectors/"${VECTOR_1}" \
 	    --path-to-vect_csv-2=data/vectors/"${VECTOR_2}" \
