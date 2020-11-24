@@ -3,41 +3,41 @@ include common.mk
 all: data/relaxation_rate/ccr*.csv
 
 clean:
-    rm -rf data
+	rm -rf data
 
-data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_ccr_rate.py data/fit/"${N_RESIDUES}"*.csv
-    python3 "$<" \
-        --path-to-fit-dir="/home/olebedenko/ccr_rates/ubq/tip4p-ew/NPT_bussi/box_8/fit/04_CAHA_NH/"\
-        --nmr-freq="${NMR_FREQ}" \
-        --ccr-type="${CCR_TYPE}" \
-        --dipole-1="${VECTOR_1}" \
-        --dipole-2="${VECTOR_2}" \
-        --nmr-freq="${NMR_FREQ}" \
-        --output-directory=data/relaxation_rate \
+data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_ccr_rate.py data/fit/${N_RESIDUES}*.csv
+	python3 "$<" \
+	    --path-to-fit-dir=data/fit \
+	    --nmr-freq="${NMR_FREQ}" \
+	    --ccr-type="${CCR_TYPE}" \
+	    --dipole-1="${VECTOR_1}" \
+	    --dipole-2="${VECTOR_2}" \
+	    --nmr-freq="${NMR_FREQ}" \
+	    --output-directory=data/relaxation_rate \
 
-data/fit/"${N_RESIDUES}"*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/"/${N_RESIDUES}"*.csv
-    python3 "$<" \
-        --path-to-crosscorr-csv=data/crosscorr \
-        --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
-        --limit="${FIT_LIMIT}" \
-        --output-directory=data/fit \
-
-
-data/crosscorr/"/${N_RESIDUES}"*.csv: ${SCRIPT_DIR}/calc_ccr_func.py data/vectors/"${VECTOR_2}"/${N_RESIDUES}"*.csv
-    python3 "$<" \
-        --path-to-vect_csv-1=data/vectors/"${VECTOR_1}" \
-        --path-to-vect_csv-2=data/vectors/"${VECTOR_2}" \
-        --output-directory=data/crosscorr \
+data/fit/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/${N_RESIDUES}*.csv
+	python3 "$<" \
+	    --path-to-crosscorr-csv=data/crosscorr \
+	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
+	    --limit="${FIT_LIMIT}" \
+	    --output-directory=data/fit \
 
 
-data/vectors/"${VECTOR_2}"/${N_RESIDUES}"*.csv: ${SCRIPT_DIR}/extract_vectors.py
-    mkdir -p data/vectors/${VECTORS}
-    python3 "$<" \
-        --path-to-trajectory="${TRAJECTORY_PATH}" \
-        --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
-        --filetype="${FILETYPE}" \
-        --pattern="${PATTERN}" \
-        --trajectory-length="${TRAJECTORY_LENGTH}" \
-        --vectors="${VECTORS}" \
-        --output-directory=data/vectors/ \
+data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+	python3 "$<" \
+	    --path-to-vect_csv-1=data/vectors/"${VECTOR_1}" \
+	    --path-to-vect_csv-2=data/vectors/"${VECTOR_2}" \
+	    --output-directory=data/crosscorr \
+
+
+data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+	mkdir -p data/vectors/${VECTORS}
+	python3 "$<" \
+	    --path-to-trajectory="${TRAJECTORY_PATH}" \
+	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
+	    --filetype="${FILETYPE}" \
+	    --pattern="${PATTERN}" \
+	    --trajectory-length="${TRAJECTORY_LENGTH}" \
+	    --vectors="${VECTORS}" \
+	    --output-directory=data/vectors/ \
 
