@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 
-def get_remote_ccr_rate(path_to_fit_dir, interaction_const, output_directory="./"):
+def get_remote_ccr_rate(path_to_fit_dir, interaction_const, output_directory="./", out_name='ccr.csv'):
     combined_df = pd.DataFrame()
     fits = ["tau_2_exp.csv"]
     for fit in fits:
@@ -24,7 +24,7 @@ def get_remote_ccr_rate(path_to_fit_dir, interaction_const, output_directory="./
         else:
             combined_df = pd.merge(combined_df, rate_table, left_index=False, right_index=False)
     os.makedirs(output_directory, exist_ok=True)
-    combined_df.to_csv(os.path.join(output_directory, "{rate}.csv".format(rate="ccr")), index=False)
+    combined_df.to_csv(os.path.join(output_directory, out_name), index=False)
     return combined_df
 
 
