@@ -9,7 +9,7 @@ import numpy as np
 
 if __name__ == '__main__':
 
-    def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, ccr_func=crosscorr_all_harmonics, out_dir="."):
+    def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, out_dir="."):
         index = None
         for path_to_v1_file, path_to_v2_file in tqdm(pairs_vectors_csv_files):
 
@@ -17,21 +17,22 @@ if __name__ == '__main__':
                        os.path.basename(path_to_v2_file).split("_")[0] + ".csv"
             vectors_1 = pd.read_csv(path_to_v1_file).values
             vectors_2 = pd.read_csv(path_to_v2_file).values
-            cross_corr = ccr_func(vectors_1, vectors_2)
+            cross_corr = crosscorr_all_harmonics(vectors_1, vectors_2)
 
             if index is None:
                 index = len(cross_corr)
 
             os.makedirs(out_dir, exist_ok=True)
-            pd.DataFrame({"time_ns": np.linspace(0, index * dt_ns, index), "crosscorr": cross_corr}).to_csv(
-                os.path.join(out_dir, out_name))
+            pd.DataFrame({
+                "time_ns": np.linspace(0, index * dt_ns, index, endpoint=False),
+                "crosscorr": cross_corr
+            }).to_csv(os.path.join(out_dir, out_name), index=False)
 
 
     parser = argparse.ArgumentParser(description='Extract vectors')
-    parser.add_argument('--path-to-vect_csv-1', required=True)
-    parser.add_argument('--path-to-vect_csv-2', required=True)
-    parser.add_argument('--shift_ind', default=0)
-    parser.add_argument('--ccr_func', default=crosscorr_all_harmonics)
+    parser.add_argument('--path-to-vect-csv-1', required=True)
+    parser.add_argument('--path-to-vect-csv-2', required=True)
+    parser.add_argument('--shift-ind', default=0)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
@@ -47,5 +48,5 @@ if __name__ == '__main__':
 
     os.makedirs(args.output_directory, exist_ok=True)
 
-    calc_and_save_crosscorr(ccr_pairs_csv_files, ccr_func=args.ccr_func, dt_ns=args.dt_ns,
+    calc_and_save_crosscorr(ccr_pairs_csv_files, dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
