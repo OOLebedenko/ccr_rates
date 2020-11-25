@@ -3,7 +3,7 @@ from ccr_scripts.save_utils import calc_and_save_remote_ccr_rate
 import argparse
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='fit crosscorr')
+    parser = argparse.ArgumentParser(description='Calc DD-DD relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
     parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
     parser.add_argument('--dipole-2', choices=["NH", "CA_HA"], default=None)
