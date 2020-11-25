@@ -12,7 +12,7 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_dd_rate.py data/fit/*.csv
 	    --dipole-2="${VECTOR_2}" \
 	    --output-directory=data/relaxation_rate \
 
-data/fit/*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/${N_RESIDUES}*.csv
+data/fit/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_dd.py data/crosscorr/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
@@ -20,7 +20,7 @@ data/fit/*.csv: ${SCRIPT_DIR}/fit_vectors.py data/crosscorr/${N_RESIDUES}*.csv
 	    --output-directory=data/fit \
 
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-vect-csv-1=data/vectors/"${VECTOR_1}" \
 	    --path-to-vect-csv-2=data/vectors/"${VECTOR_2}" \
@@ -37,4 +37,3 @@ data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
 	    --vectors="${VECTORS}" \
 	    --output-directory=data/vectors/ \
-

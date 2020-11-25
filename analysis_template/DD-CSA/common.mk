@@ -1,4 +1,4 @@
-SCRIPT_DIR:=${HOME}/ccr_rates/ccr_scripts/to_send/ccr_rates/ccr_scripts/
+SCRIPT_DIR:=${HOME}/ccr_rates/ccr_scripts/
 
 ## MD traj parameters
 TRAJECTORY_PATH=${HOME}/bioinf/trj/ubq/tip4p-ew/NPT_bussi/bussi_box_8/5_run/
