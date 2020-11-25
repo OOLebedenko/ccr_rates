@@ -13,7 +13,6 @@ PATTERN:=run%05d
 N_RESIDUES:=76
 VECTOR_1:=NH
 VECTOR_2:=CA_HA
-VECTORS:=${VECTOR_1},${VECTOR_2}
 
 ## Fit parameters
 # Number of points (if None fit limit set automatically with moving average algorithm)

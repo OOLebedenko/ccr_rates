@@ -29,14 +29,14 @@ data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py data/
 	    --output-directory=data/crosscorr/ \
 
 
-data/vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+data/vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py data/vectors/${VECTOR_1}/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-CO-vectors=data/vectors/CO \
 	    --path-to-C-CA-vectors=data/vectors/C_CA \
 	    --output-directory=data/vectors/CSA_C \
 
 
-data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+data/vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	mkdir -p data/vectors/${VECTOR_1}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \

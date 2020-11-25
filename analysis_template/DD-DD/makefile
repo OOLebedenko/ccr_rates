@@ -28,12 +28,11 @@ data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py data/vec
 
 
 data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	mkdir -p data/vectors/${VECTORS}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors="${VECTORS}" \
+	    --vectors="${VECTOR_1},${VECTOR_2}" \
 	    --output-directory=data/vectors/ \
