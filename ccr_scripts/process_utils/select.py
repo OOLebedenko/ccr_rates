@@ -43,8 +43,8 @@ def get_C_CA_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     :param frame: Frame
     :return: tuple of all HA and HN atom pairs of given frame.
     """
-    return (frame.atoms.filter(aName == "C") & (rId > 1)), \
-            frame.atoms.filter((aName == "CA") & (rId > 1))
+    return (frame.atoms.filter((aName == "C") & (rId > 1)),
+            frame.atoms.filter((aName == "CA") & (rId > 1)))
 
 
 class SelectionShifter:
