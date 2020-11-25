@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='fit crosscorr')
+    parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
     parser.add_argument('--nmr-freq', required=True, type=float)
     parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
