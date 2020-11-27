@@ -22,22 +22,23 @@ data/fit/z/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_csa.py data/crosscorr/z/${N_RESIDUES}
 	    --limit="${FIT_LIMIT}" \
 	    --output-directory=data/fit/ \
 
-data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py data/vectors/CSA_C/z/${N_RESIDUES}*.csv
+data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect-csv-1=data/vectors/"${VECTOR_1}" \
-	    --path-to-vect-csv-2=data/vectors/CSA_C/ \
+	    --path-to-vect-csv-1=../vectors/"${VECTOR_1}" \
+	    --path-to-vect-csv-2=../vectors/CSA_C/ \
 	    --output-directory=data/crosscorr/ \
+	    --dt-ns="${DT_NS}" \
+	    --shift-ind="${SHIFT}" \
 
-
-data/vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py data/vectors/${VECTOR_1}/${N_RESIDUES}*.csv
+../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv ../vectors/C_CA/${N_RESIDUES}*.csv:
 	python3 "$<" \
-	    --path-to-CO-vectors=data/vectors/CO \
-	    --path-to-C-CA-vectors=data/vectors/C_CA \
-	    --output-directory=data/vectors/CSA_C \
+	    --path-to-CO-vectors=../vectors/CO \
+	    --path-to-C-CA-vectors=../vectors/C_CA \
+	    --output-directory=../vectors/CSA_C \
 
 
-data/vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	mkdir -p data/vectors/${VECTOR_1}
+../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv ../vectors/C_CA/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+	mkdir -p ../vectors/${VECTOR_1}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
@@ -45,4 +46,4 @@ data/vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
 	    --vectors=CO,C_CA,"${VECTOR_1}" \
-	    --output-directory=data/vectors/ \
+	    --output-directory=../vectors/ \
