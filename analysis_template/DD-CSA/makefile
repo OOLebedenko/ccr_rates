@@ -1,4 +1,5 @@
-include common.mk
+include ../common.mk
+include vars.mk
 
 all: data/relaxation_rate/ccr*.csv
 
