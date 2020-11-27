@@ -107,16 +107,16 @@ class OpenCsvAsVectorsExtractors:
 class OpenCsvAsAngleExtractors:
 
     def __init__(self, ref, angle_name, filename_format="{residue.id.serial:02d}.csv",
-                     out_dir="./"):
-            self.files = []
-            self.angle_consumer_files = []
-            self.filename_format = filename_format
-            self.angle_name = angle_name
-            self.filenames = [
-                filename_format.format(residue=residue)
-                for residue in ref.residues
-            ]
-            self.out_dir = out_dir
+                 out_dir="./"):
+        self.files = []
+        self.angle_consumer_files = []
+        self.filename_format = filename_format
+        self.angle_name = angle_name
+        self.filenames = [
+            filename_format.format(residue=residue)
+            for residue in ref.residues
+        ]
+        self.out_dir = out_dir
 
     def __enter__(self):
         for fname in self.filenames:
@@ -131,7 +131,7 @@ class OpenCsvAsAngleExtractors:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         for fout, fname in zip(self.files, self.filenames):
-            if  os.path.getsize(os.path.join(self.out_dir, fname)) == 0:
+            if os.path.getsize(os.path.join(self.out_dir, fname)) == 0:
                 fout.close()
                 os.remove(os.path.join(self.out_dir, fname))
             fout.close()
