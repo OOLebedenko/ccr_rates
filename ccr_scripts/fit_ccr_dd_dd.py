@@ -16,7 +16,7 @@ if __name__ == '__main__':
         ([[0, 0, 0, 1], [1, 0.1, 1, 10]]),
     ]
 
-    scales = np.linspace(1, 3, 100)
+    scales = np.linspace(1, 3, 5)
 
     ref = PdbFile(args.path_to_reference_pdb).frames()[0]
     rname_list = [residue.name for residue in ref.residues]
