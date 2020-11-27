@@ -20,14 +20,16 @@ data/fit/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_dd.py data/crosscorr/${N_RESIDUES}*.csv
 	    --output-directory=data/fit \
 
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py ../vectors/${VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect-csv-1=data/vectors/"${VECTOR_1}" \
-	    --path-to-vect-csv-2=data/vectors/"${VECTOR_2}" \
+	    --path-to-vect-csv-1=../vectors/"${VECTOR_1}" \
+	    --path-to-vect-csv-2=../vectors/"${VECTOR_2}" \
 	    --output-directory=data/crosscorr \
+	    --dt-ns="${DT_NS}" \
+	    --shift-ind="${SHIFT}" \
 
 
-data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+../vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
@@ -35,4 +37,4 @@ data/vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
 	    --vectors="${VECTOR_1},${VECTOR_2}" \
-	    --output-directory=data/vectors/ \
+	    --output-directory=../vectors/ \
