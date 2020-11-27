@@ -31,14 +31,14 @@ data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../ve
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
 
-../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv ../vectors/C_CA/${N_RESIDUES}*.csv:
+../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-CO-vectors=../vectors/CO \
 	    --path-to-C-CA-vectors=../vectors/C_CA \
 	    --output-directory=../vectors/CSA_C \
 
 
-../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv ../vectors/C_CA/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+../vectors/CO/${N_RESIDUES}*.csv ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	mkdir -p ../vectors/${VECTOR_1}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
