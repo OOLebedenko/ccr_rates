@@ -35,13 +35,16 @@ class VectorsExtractor(TrajectoryProcessor):
     def __init__(self, get_selection, vector_consumers):
         self.get_selection = get_selection
         self.vector_consumers = vector_consumers
+        self.selections = None
 
     def __ror__(self, trajectory: Sequence[Frame]):
         return ProcessedTrajectory(trajectory, self)
 
     def __call__(self, frame: Frame):
-        atoms_selection_1, atoms_selection_2 = self.get_selection(frame)
-        vectors = atoms_selection_1.coords.values - atoms_selection_2.coords.values
+        if self.selections is None:
+            self.selections = self.get_selection(frame)
+        sel_1, sel_2 = self.selections
+        vectors = sel_1.coords.values - sel_2.coords.values
         for vector_consumer, vector in zip(self.vector_consumers, vectors):
             vector_consumer.writerow(vector)
 
@@ -54,13 +57,18 @@ class AngleExtractor(TrajectoryProcessor):
     def __init__(self, angle_name, angle_consumers):
         self.angle_name = angle_name
         self.consumers = angle_consumers
+        self.angles = None
 
     def __ror__(self, trajectory: Sequence[Frame]):
         return ProcessedTrajectory(trajectory, self)
 
     def __call__(self, frame: Frame):
-        angles = [TorsionAngleFactory.get(residue=residue, angle_name=self.angle_name) for residue in frame.residues]
-        for consumer, angle in zip(self.consumers, angles):
+        if self.angles is None:
+            self.angles = [
+                TorsionAngleFactory.get(residue=residue, angle_name=self.angle_name)
+                for residue in frame.residues
+            ]
+        for consumer, angle in zip(self.consumers, self.angles):
             if angle is None:
                 continue
 
@@ -80,7 +88,6 @@ class OpenCsvAsVectorsExtractors:
         ]
         self.out_dir = out_dir
 
-
     def __enter__(self):
         for fname in self.filenames:
             fout = open(os.path.join(self.out_dir, fname), "w")
@@ -96,19 +103,20 @@ class OpenCsvAsVectorsExtractors:
         for fout in self.files:
             fout.close()
 
+
 class OpenCsvAsAngleExtractors:
 
     def __init__(self, ref, angle_name, filename_format="{residue.id.serial:02d}.csv",
-                     out_dir="./"):
-            self.files = []
-            self.angle_consumer_files = []
-            self.filename_format = filename_format
-            self.angle_name = angle_name
-            self.filenames = [
-                filename_format.format(residue=residue)
-                for residue in ref.residues
-            ]
-            self.out_dir = out_dir
+                 out_dir="./"):
+        self.files = []
+        self.angle_consumer_files = []
+        self.filename_format = filename_format
+        self.angle_name = angle_name
+        self.filenames = [
+            filename_format.format(residue=residue)
+            for residue in ref.residues
+        ]
+        self.out_dir = out_dir
 
     def __enter__(self):
         for fname in self.filenames:
@@ -123,7 +131,7 @@ class OpenCsvAsAngleExtractors:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         for fout, fname in zip(self.files, self.filenames):
-            if  os.path.getsize(os.path.join(self.out_dir, fname)) == 0:
+            if os.path.getsize(os.path.join(self.out_dir, fname)) == 0:
                 fout.close()
                 os.remove(os.path.join(self.out_dir, fname))
             fout.close()
