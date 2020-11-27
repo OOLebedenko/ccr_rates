@@ -6,6 +6,14 @@ from ccr_scripts.process_utils.select import get_CA_HA_selection, get_NH_selecti
     get_CO_selection, get_C_CA_selection, SelectionShifter
 from ccr_scripts.process_utils.extract import OpenCsvAsVectorsExtractors, Run
 
+class XtcFileReaderWrapper:
+    def __init__(self, n_frames):
+        self.n_frames = n_frames
+
+    def __call__(self, filename):
+        return GromacsXtcFile(filename, self.n_frames)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract vectors')
     parser.add_argument('--path-to-trajectory', required=True)
@@ -13,11 +21,12 @@ if __name__ == '__main__':
     parser.add_argument('--filetype', choices=["dat", "nc", "xtc"], required=True)
     parser.add_argument('--pattern', default="run%05d")
     parser.add_argument('--trajectory-length', required=True, type=int)
+    parser.add_argument('--frames-per-trajectory-file', type=int, default=1000)
     parser.add_argument('--vectors')
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
 
-    trj_reader_dict = {"dat": TrjtoolDatFile, "nc": AmberNetCDF, "xtc": GromacsXtcFile}
+    trj_reader_dict = {"dat": TrjtoolDatFile, "nc": AmberNetCDF, "xtc": XtcFileReaderWrapper(args.frames_per_trajectory_file)}
 
     traj = Trajectory(PdbFile(args.path_to_reference_pdb).frames()[0])
     for ind in tqdm(range(1, args.trajectory_length + 1), desc="traj_reading"):
