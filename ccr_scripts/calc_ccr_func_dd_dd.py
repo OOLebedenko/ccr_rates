@@ -8,7 +8,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calc DD-DD ccr func')
     parser.add_argument('--path-to-vect-csv-1', required=True)
     parser.add_argument('--path-to-vect-csv-2', required=True)
-    parser.add_argument('--shift-ind', default=0)
+    parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
