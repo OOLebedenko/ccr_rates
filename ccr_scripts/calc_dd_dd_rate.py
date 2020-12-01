@@ -5,8 +5,8 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calc DD-DD relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
-    parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
-    parser.add_argument('--dipole-2', choices=["NH", "CA_HA"], default=None)
+    parser.add_argument('--dipole-1', choices=["N_H", "CA_HA/HA2/HA3"], default=None)
+    parser.add_argument('--dipole-2', choices=["N_H", "CA_HA/HA2/HA3"], default=None)
     parser.add_argument('--output-directory', default="./")
 
     args = parser.parse_args()
@@ -17,8 +17,8 @@ if __name__ == '__main__':
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    dipole_dict = {"NH": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA_HA": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+    dipole_dict = {"N_H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
+                   "CA_HA/HA2/HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     interaction_const *= calc_dipole_interaction_const(*dipole_dict[args.dipole_2])

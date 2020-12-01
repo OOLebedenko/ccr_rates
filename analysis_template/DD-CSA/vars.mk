@@ -8,7 +8,7 @@ VECTOR_1:=NH
 SHIFT=0
 
 ## Fit parameters
-Length of fit in DT_NS units, e.g. FIT_LIMIT=5000 and DT_NS=0.001 correspond to 5 ns
+#Length of fit in DT_NS units, e.g. FIT_LIMIT=5000 and DT_NS=0.001 correspond to 5 ns
 FIT_LIMIT=5000
 
 ## CCR parameters:

@@ -27,15 +27,27 @@ def save_csa_c_pas(path_to_CO_vectors, path_to_C_CA_vectors, output_directory):
         extract_csa_c_y_axis(CO_vectors, csa_c_z_axis, r_id, output_directory)
 
 
-def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, out_dir="."):
-    index = None
-    for path_to_v1_file, path_to_v2_file in tqdm(pairs_vectors_csv_files):
+def calc_crosscorr(path_to_v1_files, path_to_v2_files, weights=None):
+    sum_ccr = []
+    for path_to_v1_file in path_to_v1_files:
+        for path_to_v2_file in path_to_v2_files:
+            vectors_1 = pd.read_csv(path_to_v1_file).values
+            vectors_2 = pd.read_csv(path_to_v2_file).values
+            sum_ccr.append(crosscorr_all_harmonics(vectors_1, vectors_2))
+    if weights is None:
+        weights = np.ones(len(sum_ccr))
+    cross_corr = [weight * ccr_func for weight, ccr_func in zip(weights, sum_ccr)]
+    return np.array(cross_corr).sum(axis=0)
 
-        out_name = os.path.basename(path_to_v1_file).split("_")[0] + "_" + \
-                   os.path.basename(path_to_v2_file).split("_")[0] + ".csv"
-        vectors_1 = pd.read_csv(path_to_v1_file).values
-        vectors_2 = pd.read_csv(path_to_v2_file).values
-        cross_corr = crosscorr_all_harmonics(vectors_1, vectors_2)
+
+def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, weights=None, out_dir="."):
+    index = None
+
+    for path_to_v1_files, path_to_v2_files in tqdm(pairs_vectors_csv_files):
+
+        cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files, weights)
+        out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "_" + \
+                   os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
 
         if index is None:
             index = len(cross_corr)

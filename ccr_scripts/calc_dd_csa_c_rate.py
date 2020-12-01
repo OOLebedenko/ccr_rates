@@ -36,7 +36,7 @@ if __name__ == '__main__':
         path_to_fit_dir = os.path.join(args.path_to_fit_dir, axis)
         df_ccr_axis = calc_and_save_remote_ccr_rate(path_to_fit_dir, interaction_const, out_name="ccr_{}.csv".format(axis),
                                       output_directory=args.output_directory)
-        rid_1, rid_2, ccr_rate  = df_ccr_axis.rId_1.values, df_ccr_axis.rId_2.values, df_ccr_axis.relaxation_rate.values
+        rid_1, rid_2, ccr_rate  = df_ccr_axis.rid_1.values, df_ccr_axis.rId_2.values, df_ccr_axis.relaxation_rate.values
         full_ccr.append(ccr_rate)
 
 
