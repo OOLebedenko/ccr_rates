@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
     parser.add_argument('--nmr-freq', required=True, type=float)
-    parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
+    parser.add_argument('--dipole-1', choices=["N_H", "CA_HA"], default=None)
     parser.add_argument('--output-directory', default="./")
 
     args = parser.parse_args()
@@ -21,23 +21,13 @@ if __name__ == '__main__':
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    CSA_C = {"x": 244e-6,
-             "y": 178e-6,
-             "z": 90e-6}
 
-    dipole_dict = {"NH": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
+    dipole_dict = {"N_H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
                    "CA_HA": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
     
-    full_ccr = []
-    for axis in ["x", "y", "z"]:
-        interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
-        interaction_const *= calc_csa_axis_interaction_const(gyromagnetic_ratio_dict["C13"], CSA_C[axis],
-                                                             args.nmr_freq)
-        path_to_fit_dir = os.path.join(args.path_to_fit_dir, axis)
-        df_ccr_axis = calc_and_save_remote_ccr_rate(path_to_fit_dir, interaction_const, out_name="ccr_{}.csv".format(axis),
-                                      output_directory=args.output_directory)
-        rid_1, rid_2, ccr_rate  = df_ccr_axis.rid_1.values, df_ccr_axis.rId_2.values, df_ccr_axis.relaxation_rate.values
-        full_ccr.append(ccr_rate)
+    interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
+    B0 = args.nmr_freq / (gyromagnetic_ratio_dict["H1"] / 2 / np.pi)
+    const = 2 * B0 / 3 * interaction_const
 
-
-    pd.DataFrame({"relaxation_rate": np.array(full_ccr).sum(axis=0), "rId_1" : rid_1, "rId_2": rid_2}).to_csv(os.path.join(args.output_directory, "ccr.csv"), index=False)
+    df_ccr_axis = calc_and_save_remote_ccr_rate(args.path_to_fit_dir, const, out_name="ccr.csv",
+                                  output_directory=args.output_directory)

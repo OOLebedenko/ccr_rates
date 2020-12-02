@@ -7,7 +7,7 @@ clean:
 	rm -rf data
 
 
-data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/z/*.csv
+data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/tau_2_exp.csv
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
 	    --nmr-freq="${NMR_FREQ}" \
@@ -16,29 +16,29 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/z/*.
 	    --output-directory=data/relaxation_rate \
 
 
-data/fit/z/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_csa.py data/crosscorr/z/${N_RESIDUES}*.csv
+data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr/ \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --limit="${FIT_LIMIT}" \
 	    --output-directory=data/fit/ \
 
-data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
+data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect-csv-1=../vectors/"${VECTOR_1}" \
-	    --path-to-vect-csv-2=../vectors/CSA_C/ \
+	    --path-to-metadata-vect-1=../vectors/CA_HA.csv \
+	    --path-to-csa-dir=../vectors/CSA_C/ \
 	    --output-directory=data/crosscorr/ \
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
 
-../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv
+../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/C_O/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-CO-vectors=../vectors/CO \
+	    --path-to-CO-vectors=../vectors/C_O \
 	    --path-to-C-CA-vectors=../vectors/C_CA \
 	    --output-directory=../vectors/CSA_C \
 
 
-../vectors/CO/${N_RESIDUES}*.csv ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+../vectors/C_O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	mkdir -p ../vectors/${VECTOR_1}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
@@ -46,5 +46,5 @@ data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../ve
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors=CO,C_CA,"${VECTOR_1}" \
+	    --vectors=C_O,C_CA,"${VECTOR_1}" \
 	    --output-directory=../vectors/ \
