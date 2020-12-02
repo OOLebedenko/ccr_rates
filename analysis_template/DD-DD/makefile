@@ -23,8 +23,10 @@ data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
 
 data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py ../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-metadata-vect-1=../vectors/${DD_VECTOR_2}.csv \
-	    --path-to-metadata-vect-2=../vectors/${DD_VECTOR_1}.csv \
+	    --path-to-metadata-vect-1=../vectors/${DD_VECTOR_1}.csv \
+	    --path-to-metadata-vect-2=../vectors/${DD_VECTOR_2}.csv \
+	    --dt-ns="${DT_NS}" \
+	    --shift-ind="${SHIFT}" \
 	    --output-directory=data/crosscorr \
 
 

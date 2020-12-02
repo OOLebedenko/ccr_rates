@@ -25,7 +25,7 @@ data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
 
 data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-metadata-vect-1=../vectors/CA_HA.csv \
+	    --path-to-metadata-vect-1=../vectors/${DD_VECTOR}.csv \
 	    --path-to-csa-dir=../vectors/CSA_C/ \
 	    --output-directory=data/crosscorr/ \
 	    --dt-ns="${DT_NS}" \

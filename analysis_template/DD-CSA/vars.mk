@@ -12,7 +12,7 @@ VECTOR_5=H_HA
 VECTORS=${VECTOR_1},${VECTOR_2},${VECTOR_3},${VECTOR_4},${VECTOR_5}
 
 # specify vector that takes part in particular DD-CSA-C CCR
-DD_VECTOR_1=N_H
+DD_VECTOR=N_H
 #other vectors -- C CSA axis
 
 #shift parameter corresponds to the same residue SHIFT=0 (CAHA_C) or the next SHIFT=-1 (CAHA_Cm1)
