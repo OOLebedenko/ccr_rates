@@ -27,7 +27,7 @@ if __name__ == '__main__':
     
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     B0 = args.nmr_freq / (gyromagnetic_ratio_dict["H1"] / 2 / np.pi)
-    const = 2 * B0 / 3 * interaction_const
+    const = gyromagnetic_ratio_dict["C13"] * 2 * B0 * interaction_const / 3
 
     df_ccr_axis = calc_and_save_remote_ccr_rate(args.path_to_fit_dir, const, out_name="ccr.csv",
                                   output_directory=args.output_directory)
