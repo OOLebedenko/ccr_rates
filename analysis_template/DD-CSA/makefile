@@ -11,7 +11,7 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/tau_
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
 	    --nmr-freq="${NMR_FREQ}" \
-	    --dipole="${VECTOR_1}" \
+	    --dipole="${DD_VECTOR}" \
 	    --nmr-freq="${NMR_FREQ}" \
 	    --output-directory=data/relaxation_rate \
 
@@ -39,12 +39,12 @@ data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vect
 
 
 ../vectors/C_O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	mkdir -p ../vectors/${VECTOR_1}
+	mkdir -p ../vectors/${DD_VECTOR}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors=C_O,C_CA,"${VECTOR_1}" \
+	    --vectors=C_O,C_CA,"${DD_VECTOR}" \
 	    --output-directory=../vectors/ \
