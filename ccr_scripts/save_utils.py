@@ -80,14 +80,16 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
     for bound in bounds:
         tau_table = pd.DataFrame()
         for cross_corr_file in tqdm(sorted(path_to_ccr_csv_files), desc=output_directory):
+            name = os.path.splitext(os.path.basename(cross_corr_file))[0]
             df = pd.read_csv(cross_corr_file)[:100 * 1000]
             time_ns, crosscorr = df["time_ns"].values, df["crosscorr"].values
 
             if limit is None:
-                limit = estimate_acorr_fitting_limit(data=crosscorr / crosscorr[0])
+                fit_limit = estimate_acorr_fitting_limit(data=crosscorr / crosscorr[0])
+            else:
+                fit_limit = limit
 
-            popt = fit_one_corr_fucnc(crosscorr[:limit], time_ns[:limit], bound, scales)
-            name = os.path.splitext(os.path.basename(cross_corr_file))[0]
+            popt = fit_one_corr_fucnc(crosscorr[:fit_limit], time_ns[:limit], bound, scales)
             amplitudes = popt[::2]
             taus = popt[1::2]
             order = (len(bound[0]) + 1) // 2
