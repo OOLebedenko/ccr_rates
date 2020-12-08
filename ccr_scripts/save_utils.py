@@ -22,9 +22,12 @@ def save_csa_c_pas(path_to_CO_vectors, path_to_C_CA_vectors, output_directory):
         CO_vectors = pd.read_csv(path_to_CO).values
         C_CA_vectors = pd.read_csv(path_to_C_CA).values
 
-        csa_c_z_axis = extract_csa_c_z_axis(CO_vectors, C_CA_vectors, r_id, output_directory)
-        extract_csa_c_x_axis(CO_vectors, csa_c_z_axis, r_id, output_directory)
-        extract_csa_c_y_axis(CO_vectors, csa_c_z_axis, r_id, output_directory)
+        csa_c_z_axis = extract_csa_c_z_axis(CO_vectors, C_CA_vectors)
+        csa_c_x_axis = extract_csa_c_x_axis(CO_vectors, csa_c_z_axis)
+        csa_c_y_axis = extract_csa_c_y_axis(CO_vectors, csa_c_z_axis)
+        for csa_axis, axis in zip([csa_c_x_axis, csa_c_y_axis, csa_c_z_axis], ["x", "y", "z"]):
+            pd.DataFrame(csa_axis, columns=["x", "y", "z"]).to_csv(
+                os.path.join(output_directory, axis, "{r_id}_{axis}_axis.csv".format(r_id=r_id, axis=axis)), index=False)
 
 
 def calc_crosscorr(path_to_v1_files, path_to_v2_files, weights=None):
