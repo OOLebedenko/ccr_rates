@@ -3,13 +3,6 @@ from ccr_scripts.save_utils import calc_and_save_remote_ccr_rate
 import argparse
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Calc DD-DD relaxation rate')
-    parser.add_argument('--path-to-fit-dir', required=True, )
-    parser.add_argument('--dipole-1', choices=["NH", "CA_HA"], default=None)
-    parser.add_argument('--dipole-2', choices=["NH", "CA_HA"], default=None)
-    parser.add_argument('--output-directory', default="./")
-
-    args = parser.parse_args()
 
     rCAHA = 1.09e-10
     rNH = 1.02e-10
@@ -17,8 +10,17 @@ if __name__ == '__main__':
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    dipole_dict = {"NH": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA_HA": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
+                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+
+    parser = argparse.ArgumentParser(description='Calc DD-DD relaxation rate')
+    parser.add_argument('--path-to-fit-dir', required=True, )
+    parser.add_argument('--dipole-1', choices=dipole_dict.keys(), default=None)
+    parser.add_argument('--dipole-2', choices=dipole_dict.keys(), default=None)
+    parser.add_argument('--output-directory', default="./")
+
+    args = parser.parse_args()
+
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     interaction_const *= calc_dipole_interaction_const(*dipole_dict[args.dipole_2])

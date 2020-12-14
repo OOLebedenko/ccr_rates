@@ -19,12 +19,12 @@ if __name__ == '__main__':
     scales = np.linspace(1, 3, 5)
 
     ref = PdbFile(args.path_to_reference_pdb).frames()[0]
-    rname_list = [residue.name for residue in ref.residues]
+    residue_name_map = {r.id.serial: r.name for r in ref.residues}
 
     fit_and_save_crosscorr_func(args.path_to_crosscorr_csv,
                                 bounds=bounds,
                                 scales=scales,
-                                rname_list=rname_list,
+                                residue_name_map=residue_name_map,
                                 limit=args.limit,
                                 output_directory=args.output_directory
                                 )

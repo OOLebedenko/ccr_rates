@@ -7,44 +7,44 @@ clean:
 	rm -rf data
 
 
-data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/z/*.csv
+data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/tau_2_exp.csv
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
 	    --nmr-freq="${NMR_FREQ}" \
-	    --dipole="${VECTOR_1}" \
+	    --dipole="${DD_VECTOR}" \
 	    --nmr-freq="${NMR_FREQ}" \
 	    --output-directory=data/relaxation_rate \
 
 
-data/fit/z/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_csa.py data/crosscorr/z/${N_RESIDUES}*.csv
+data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr/ \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --limit="${FIT_LIMIT}" \
 	    --output-directory=data/fit/ \
 
-data/crosscorr/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
+data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py ../vectors/CSA-C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect-csv-1=../vectors/"${VECTOR_1}" \
-	    --path-to-vect-csv-2=../vectors/CSA_C/ \
+	    --path-to-metadata="../vectors" \
+	    --dipole="${DD_VECTOR}" \
+		--path-to-csa-dir=../vectors/CSA-C/ \
 	    --output-directory=data/crosscorr/ \
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
 
-../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv ../vectors/CO/${N_RESIDUES}*.csv
+../vectors/CSA-C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/C-O/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-CO-vectors=../vectors/CO \
-	    --path-to-C-CA-vectors=../vectors/C_CA \
-	    --output-directory=../vectors/CSA_C \
+	    --path-to-CO-vectors=../vectors/C-O \
+	    --path-to-C-CA-vectors=../vectors/C-CA \
+	    --output-directory=../vectors/CSA-C \
 
 
-../vectors/CO/${N_RESIDUES}*.csv ../vectors/${VECTOR_1}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	mkdir -p ../vectors/${VECTOR_1}
+../vectors/C-O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors=CO,C_CA,"${VECTOR_1}" \
+	    --vectors=C-O,C-CA,"${DD_VECTOR}" \
 	    --output-directory=../vectors/ \

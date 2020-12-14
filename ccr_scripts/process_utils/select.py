@@ -1,89 +1,55 @@
-from typing import Sequence, List, Union, Tuple
-from pyxmolpp2 import Frame, AtomSelection, rId, aName, rName
+from pyxmolpp2 import Residue, AtomSelection, Frame, aName
+from typing import Union, List
 
 
-def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all backbone atom pairs of given frame.
-    """
-    return (frame.atoms.filter((rName != "PRO") & (aName == "N") & (rId > 1)),
-            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1)))
+def has_atoms(*atom_names):
+    def predicate(residue: Residue):
+        try:
+            for atom_name in atom_names:
+                residue[atom_name]
+            return True
+        except IndexError:
+            return False
+
+    return predicate
 
 
-def get_CA_HA_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all backbone atom pairs of given frame.
-    """
-    return (frame.atoms.filter((aName == "CA") & (rId > 1)),
-            frame.atoms.filter((aName == "HA") & (rId > 1) | (aName == "HA2")))
+def atom_pairs_from_consequent_residues(atom_names_1: Union[str, List[str]], atom_names_2: Union[str, List[str]]):
+    if isinstance(atom_names_1, str):
+        atom_names_1 = [atom_names_1]
+    if isinstance(atom_names_2, str):
+        atom_names_2 = [atom_names_2]
+
+    def to_atoms(residue):
+        if residue is not None:
+            return residue.atoms
+        return AtomSelection()
+
+    def selector(frame: Frame):
+        residues = frame.residues.filter(has_atoms(*atom_names_1))
+        return [
+            (first_atom, second_atom)
+            for res in residues
+            for first_atom in res.atoms.filter(aName.is_in(*atom_names_1))
+            for second_atom in to_atoms(res.next).filter(aName.is_in(*atom_names_2))
+        ]
+
+    return selector
 
 
-def get_HA_HN_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all HA and HN atom pairs of given frame.
-    """
-    return (frame.atoms.filter((rName != "PRO") & (aName == "HA") & (rId > 1) | (aName == "HA2")),
-            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1)))
+def atom_pairs_from_one_residue(atom_names_1: Union[str, List[str]], atom_names_2: Union[str, List[str]]):
+    if isinstance(atom_names_1, str):
+        atom_names_1 = [atom_names_1]
+    if isinstance(atom_names_2, str):
+        atom_names_2 = [atom_names_2]
 
+    def selector(frame: Frame):
+        residues = frame.residues.filter(has_atoms(*atom_names_1))
+        return [
+            (first_atom, second_atom)
+            for r in residues
+            for first_atom in r.atoms.filter(aName.is_in(*atom_names_1))
+            for second_atom in r.atoms.filter(aName.is_in(*atom_names_2))
+        ]
 
-def get_CO_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all HA and HN atom pairs of given frame.
-    """
-    return (frame.atoms.filter((aName == "C") & (rId > 1)),
-            frame.atoms.filter((aName == "O") & (rId > 1)))
-
-
-def get_C_CA_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all HA and HN atom pairs of given frame.
-    """
-    return (frame.atoms.filter((aName == "C") & (rId > 1)),
-            frame.atoms.filter((aName == "CA") & (rId > 1)))
-
-
-class SelectionShifter:
-    def __init__(self, select_func, shift_ind):
-        self.select_func = select_func
-        self.shift_ind = shift_ind
-
-    def __call__(self, frame: Frame):
-        atoms_1, atoms_2 = self.select_func(frame)
-
-        new_atoms_1 = []
-        new_atoms_2 = []
-        if len(atoms_1) != len(atoms_2):
-            for atom_1 in atoms_1:
-                for atom_2 in atoms_2:
-                    if atom_2.residue.id.serial - atom_1.residue.id.serial == self.shift_ind:
-                        new_atoms_1.append(atom_1)
-                        new_atoms_2.append(atom_2)
-        else:
-            for atom_1, atom_2 in zip(atoms_1, atoms_2[self.shift_ind:]):
-                if atom_2.residue.id.serial - atom_1.residue.id.serial == self.shift_ind:
-                    new_atoms_1.append(atom_1)
-                    new_atoms_2.append(atom_2)
-        return AtomSelection(new_atoms_1), AtomSelection(new_atoms_2)
-
-
-def get_HA_GLY_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all backbone atom pairs of given frame.
-    """
-    return (frame.atoms.filter((rName == "GLY") & (aName == "CA") & (rId > 1)),
-            frame.atoms.filter((rId > 1) & (aName == "HA3")))
-
-
-def get_HA_HN_GLY_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-    :param frame: Frame
-    :return: tuple of all HA and HN atom pairs of given frame.
-    """
-    return (frame.atoms.filter((rName == "GLY") & (aName == "HA3")),
-            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1)))
+    return selector

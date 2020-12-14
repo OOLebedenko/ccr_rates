@@ -1,19 +1,19 @@
 include ../common.mk
 include vars.mk
 
-all: data/relaxation_rate/ccr*.csv
+all: data/relaxation_rate/ccr.csv
 
 clean:
 	rm -rf data
 
-data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_dd_rate.py data/fit/*.csv
+data/relaxation_rate/ccr.csv: ${SCRIPT_DIR}/calc_dd_dd_rate.py data/fit/tau_2_exp.csv
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
-	    --dipole-1="${VECTOR_1}" \
-	    --dipole-2="${VECTOR_2}" \
+	    --dipole-1="${DD_VECTOR_1}" \
+	    --dipole-2="${DD_VECTOR_2}" \
 	    --output-directory=data/relaxation_rate \
 
-data/fit/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_dd.py data/crosscorr/${N_RESIDUES}*.csv
+data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
@@ -21,21 +21,23 @@ data/fit/*.csv: ${SCRIPT_DIR}/fit_ccr_dd_dd.py data/crosscorr/${N_RESIDUES}*.csv
 	    --output-directory=data/fit \
 
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_dd.py ../vectors/${VECTOR_2}/${N_RESIDUES}*.csv
+data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_dd.py ../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-vect-csv-1=../vectors/"${VECTOR_1}" \
-	    --path-to-vect-csv-2=../vectors/"${VECTOR_2}" \
-	    --output-directory=data/crosscorr \
+	    --path-to-metadata="../vectors" \
+	    --dipole-1="${DD_VECTOR_1}" \
+	    --dipole-2="${DD_VECTOR_2}" \
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
+	    --output-directory=data/crosscorr \
 
 
-../vectors/${VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors="${VECTOR_1},${VECTOR_2}" \
+	    --vectors="${VECTORS}" \
 	    --output-directory=../vectors/ \
+

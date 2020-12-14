@@ -1,5 +1,5 @@
 numpy~=1.19.2
 pandas~=1.1.2
-pyxmolpp2~=1.6.0
+git+https://github.com/sizmailov/pyxmolpp2.git@dev # TODO: replace with stable release pyxmolpp2~=2.0
 tqdm~=4.49.0
 scipy~=1.5.4
