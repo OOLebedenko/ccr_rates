@@ -1,4 +1,3 @@
-include ../common.mk
 
 ## Model system parameters
 N_RESIDUES=76
