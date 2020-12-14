@@ -1,43 +1,15 @@
-include ../common.mk
-include vars.mk
+SHELL := /bin/bash
 
-all: data/relaxation_rate/ccr.csv
+.PHONY: all clean
 
-clean:
-	rm -rf data
+default: all
 
-data/relaxation_rate/ccr.csv: ${SCRIPT_DIR}/calc_dd_dd_rate.py data/fit/tau_2_exp.csv
-	python3 "$<" \
-	    --path-to-fit-dir=data/fit \
-	    --dipole-1="${DD_VECTOR_1}" \
-	    --dipole-2="${DD_VECTOR_2}" \
-	    --output-directory=data/relaxation_rate \
+SUBDIRS := $(shell for i in ./*/makefile ; do dirname $${i} ; done )
 
-data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
-	python3 "$<" \
-	    --path-to-crosscorr-csv=data/crosscorr \
-	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
-	    --limit="${FIT_LIMIT}" \
-	    --output-directory=data/fit \
+$(SUBDIRS)::
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
+all : $(SUBDIRS)
 
-data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_dd.py ../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv
-	python3 "$<" \
-	    --path-to-metadata="../vectors" \
-	    --dipole-1="${DD_VECTOR_1}" \
-	    --dipole-2="${DD_VECTOR_2}" \
-	    --dt-ns="${DT_NS}" \
-	    --shift-ind="${SHIFT}" \
-	    --output-directory=data/crosscorr \
-
-
-../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	python3 "$<" \
-	    --path-to-trajectory="${TRAJECTORY_PATH}" \
-	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
-	    --filetype="${FILETYPE}" \
-	    --pattern="${PATTERN}" \
-	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors="${VECTORS}" \
-	    --output-directory=../vectors/ \
-
+clean: $(SUBDIRS)
+	rm -rf vectors
