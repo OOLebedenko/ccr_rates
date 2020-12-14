@@ -25,26 +25,26 @@ data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
 
 data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_ccr_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-metadata-vect-1=../vectors/${DD_VECTOR}.csv \
-	    --path-to-csa-dir=../vectors/CSA_C/ \
+	    --path-to-metadata="../vectors" \
+	    --dipole="${DD_VECTOR}" \
+		--path-to-csa-dir=../vectors/CSA-C/ \
 	    --output-directory=data/crosscorr/ \
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
 
 ../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/C_O/${N_RESIDUES}*.csv
 	python3 "$<" \
-	    --path-to-CO-vectors=../vectors/C_O \
-	    --path-to-C-CA-vectors=../vectors/C_CA \
-	    --output-directory=../vectors/CSA_C \
+	    --path-to-CO-vectors=../vectors/C-O \
+	    --path-to-C-CA-vectors=../vectors/C-CA \
+	    --output-directory=../vectors/CSA-C \
 
 
 ../vectors/C_O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
-	mkdir -p ../vectors/${DD_VECTOR}
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors=C_O,C_CA,"${DD_VECTOR}" \
+	    --vectors=C-O,C-CA,"${DD_VECTOR}" \
 	    --output-directory=../vectors/ \

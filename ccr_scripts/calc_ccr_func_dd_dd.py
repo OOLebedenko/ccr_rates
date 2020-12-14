@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
-from ccr_scripts.save_utils import calc_and_save_crosscorr
+import os
+from ccr_scripts.save_utils import calc_and_save_crosscorr, vector_name_to_basename
 
 
 def extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, shift_ind):
@@ -15,16 +16,17 @@ def extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, shift_ind):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calc DD-DD ccr func')
-    parser.add_argument('--path-to-metadata-vect-1', required=True)
-    parser.add_argument('--path-to-metadata-vect-2', required=True)
+    parser.add_argument('--path-to-metadata', required=True)
+    parser.add_argument('--dipole-1', required=True)
+    parser.add_argument('--dipole-2', required=True)
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
 
     ccr_pairs_csv_files = []
-    meta_vect_1 = pd.read_csv(args.path_to_metadata_vect_1)
-    meta_vect_2 = pd.read_csv(args.path_to_metadata_vect_2)
+    meta_vect_1 = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole_1)}.csv"))
+    meta_vect_2 = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole_2)}.csv"))
 
     calc_and_save_crosscorr(extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, args.shift_ind),
                             dt_ns=args.dt_ns,

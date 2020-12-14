@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from glob import glob
-from ccr_scripts.save_utils import calc_and_save_crosscorr
+from ccr_scripts.save_utils import calc_and_save_crosscorr, vector_name_to_basename
 
 
 def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_ind):
@@ -23,7 +23,8 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Calc DD-CSA ccr func')
-    parser.add_argument('--path-to-metadata-vect-1', required=True)
+    parser.add_argument('--path-to-metadata', required=True)
+    parser.add_argument('--dipole', required=True)
     parser.add_argument('--path-to-csa-dir', required=True)
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
@@ -32,7 +33,7 @@ if __name__ == '__main__':
 
     CSA_C = [244e-6, 178e-6, 90e-6]
 
-    meta_vect = pd.read_csv(args.path_to_metadata_vect_1)
+    meta_vect = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole)}.csv"))
 
     ccr_pairs_csv_files = extract_pairvect_names_from_metadata_csa(meta_vect, args.path_to_csa_dir, args.shift_ind)
 

@@ -4,22 +4,22 @@ import argparse
 import numpy as np
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
-    parser.add_argument('--path-to-fit-dir', required=True, )
-    parser.add_argument('--nmr-freq', required=True, type=float)
-    parser.add_argument('--dipole-1', choices=["N_H", "CA_HA"], default=None)
-    parser.add_argument('--output-directory', default="./")
-
-    args = parser.parse_args()
-
     rCAHA = 1.09e-10
     rNH = 1.02e-10
     gyromagnetic_ratio_dict = {"H1": 267.522e6,
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    dipole_dict = {"N_H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA_HA/HA2/HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
+                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+
+    parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
+    parser.add_argument('--path-to-fit-dir', required=True, )
+    parser.add_argument('--nmr-freq', required=True, type=float)
+    parser.add_argument('--dipole-1', choices=dipole_dict.keys(), default=None)
+    parser.add_argument('--output-directory', default="./")
+
+    args = parser.parse_args()
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     B0 = args.nmr_freq / (gyromagnetic_ratio_dict["H1"] / 2 / np.pi)

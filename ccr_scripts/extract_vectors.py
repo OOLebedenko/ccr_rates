@@ -1,4 +1,5 @@
 from ccr_scripts.process_utils.select import atom_pairs_from_one_residue, atom_pairs_from_consequent_residues
+from ccr_scripts.save_utils import vector_name_to_basename
 from pyxmolpp2 import Trajectory, PdbFile, Atom, TrjtoolDatFile, GromacsXtcFile, AmberNetCDF
 from pyxmolpp2.pipe import WriteVectorsToCsv, Run
 from tqdm import tqdm
@@ -72,13 +73,11 @@ if __name__ == '__main__':
 
     processes = []
     for vector in args.vectors.split(","):
-        atom_1, atom_2 = vector.split("_")
-        atom_1 = atom_1.split("/")
-        atom_2 = atom_2.split("/")
-        subdir = f"{atom_1[0]}_{atom_2[0]}"
+        atom_1, atom_2 = vector.split("-")
+        subdir = vector_name_to_basename(vector)
         processes.append(
             WriteVectorsToCsvWithMetadata(
-                atom_pairs_from_one_residue(atom_1, atom_2),
+                atom_pairs_from_one_residue(atom_1.split("|"), atom_2.split("|")),
                 OutputFilenameFormatter(os.path.join(args.output_directory, subdir)),
                 meta_filename=f"{os.path.join(args.output_directory)}/{subdir}.csv"
             )

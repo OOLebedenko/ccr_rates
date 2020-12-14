@@ -51,7 +51,7 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, weights=None, out_di
     for path_to_v1_files, path_to_v2_files in tqdm(pairs_vectors_csv_files):
 
         cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files, weights)
-        out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "_" + \
+        out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
                    os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
 
         if index is None:
@@ -99,8 +99,7 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
             amplitudes = popt[::2]
             taus = popt[1::2]
 
-            rid_1 = int(name.split("_")[0])
-            rid_2 = int(name.split("_")[-1].split(".")[0])
+            rid_1, rid_2 = list(map(int, name.split("-")))
 
             popt_dict = {
                 'rId_1': rid_1, 'rName_1': residue_name_map[rid_1],
@@ -143,3 +142,10 @@ def calc_and_save_remote_ccr_rate(path_to_fit_dir, interaction_const, output_dir
     os.makedirs(output_directory, exist_ok=True)
     combined_df.to_csv(os.path.join(output_directory, out_name), index=False)
     return combined_df
+
+
+def vector_name_to_basename(vector_atom_names_str):
+    a1, a2 = vector_atom_names_str.split("-")
+    a1 = a1.split("|")[0]
+    a2 = a2.split("|")[0]
+    return f"{a1}-{a2}"
