@@ -9,11 +9,11 @@ clean:
 data/relaxation_rate/ccr.csv: ${SCRIPT_DIR}/calc_dd_dd_rate.py data/fit/tau_2_exp.csv
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
-	    --dipole-1="${VECTOR_1}" \
-	    --dipole-2="${VECTOR_2}" \
+	    --dipole-1="${DD_VECTOR_1}" \
+	    --dipole-2="${DD_VECTOR_2}" \
 	    --output-directory=data/relaxation_rate \
 
-data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
+data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
@@ -21,7 +21,7 @@ data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
 	    --output-directory=data/fit \
 
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_dd.py ../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv
+data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_dd.py ../vectors/${DD_VECTOR_2}/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-metadata="../vectors" \
 	    --dipole-1="${DD_VECTOR_1}" \

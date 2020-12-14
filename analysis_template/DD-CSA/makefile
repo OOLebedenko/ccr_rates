@@ -16,14 +16,14 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_dd_csa_c_rate.py data/fit/tau_
 	    --output-directory=data/relaxation_rate \
 
 
-data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/${N_RESIDUES}*.csv
+data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr/ \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
 	    --limit="${FIT_LIMIT}" \
 	    --output-directory=data/fit/ \
 
-data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py ../vectors/CSA_C/z/${N_RESIDUES}*.csv
+data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py ../vectors/CSA-C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-metadata="../vectors" \
 	    --dipole="${DD_VECTOR}" \
@@ -32,14 +32,14 @@ data/crosscorr/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py
 	    --dt-ns="${DT_NS}" \
 	    --shift-ind="${SHIFT}" \
 
-../vectors/CSA_C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/C_O/${N_RESIDUES}*.csv
+../vectors/CSA-C/z/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_csa_c_pas.py ../vectors/C-O/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-CO-vectors=../vectors/C-O \
 	    --path-to-C-CA-vectors=../vectors/C-CA \
 	    --output-directory=../vectors/CSA-C \
 
 
-../vectors/C_O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
+../vectors/C-O/${N_RESIDUES}*.csv: ${SCRIPT_DIR}/extract_vectors.py
 	python3 "$<" \
 	    --path-to-trajectory="${TRAJECTORY_PATH}" \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
