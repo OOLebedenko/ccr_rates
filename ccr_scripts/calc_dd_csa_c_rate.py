@@ -19,7 +19,7 @@ if __name__ == '__main__':
                                "C13": 67.2828e6}
 
     dipole_dict = {"N_H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA_HA": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+                   "CA_HA/HA2/HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     B0 = args.nmr_freq / (gyromagnetic_ratio_dict["H1"] / 2 / np.pi)
