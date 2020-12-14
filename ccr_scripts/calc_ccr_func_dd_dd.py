@@ -1,4 +1,3 @@
-import os
 import argparse
 import pandas as pd
 from ccr_scripts.save_utils import calc_and_save_crosscorr

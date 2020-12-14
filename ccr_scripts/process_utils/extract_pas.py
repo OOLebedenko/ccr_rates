@@ -1,12 +1,10 @@
-import pandas as pd
 import numpy as np
-import os
 
 
-def rotate_vector_clockwise(vector, axis, theta):
+def rotate_vector_clockwise(vector, axis, theta_rad):
     # The Rodrigues' clockwise rotation
-    cos_theta = np.cos(theta)
-    sin_theta = np.sin(theta)
+    cos_theta = np.cos(theta_rad)
+    sin_theta = np.sin(theta_rad)
     axis = axis / np.linalg.norm(axis, axis=0)
     K = np.array([[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]])
     R = np.eye(3, 3) + sin_theta * K + (1 - cos_theta) * np.dot(K, K)
@@ -26,7 +24,7 @@ def extract_csa_c_x_axis(CO_vectors, csa_c_z_axis):
     # # definition of the x-axis: 38 degrees from CN to CO (rotation around z-axis)
     # # it's equvalent clockwise rotation CO on 82 degrees around z-axis
     CO_vectors /= np.linalg.norm(CO_vectors, axis=1)[:, np.newaxis]
-    theta = 82 * np.pi / 180
+    theta = np.deg2rad(82)
     x_axis = np.array(
         [rotate_vector_clockwise(vector, z_axis, theta) for vector, z_axis in zip(CO_vectors, csa_c_z_axis)])
     return x_axis
@@ -36,7 +34,7 @@ def extract_csa_c_y_axis(CO_vectors, csa_c_z_axis):
     # # definition of the y-axis: 128 degrees from CN to CO(rotation around z-axis)]
     # # it's equvalent clockwise rotation CO on -8 degrees around z-axis
     CO_vectors /= np.linalg.norm(CO_vectors, axis=1)[:, np.newaxis]
-    theta = -8 * np.pi / 180
+    theta = np.deg2rad(-8)
     y_axis = np.array(
         [rotate_vector_clockwise(vector, z_axis, theta) for vector, z_axis in zip(CO_vectors, csa_c_z_axis)])
     return y_axis
