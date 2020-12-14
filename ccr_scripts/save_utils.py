@@ -92,7 +92,7 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
             else:
                 fit_limit = limit
 
-            popt = fit_one_corr_fucnc(crosscorr[:fit_limit], time_ns[:limit], bound, scales)
+            popt = fit_one_corr_fucnc(crosscorr[:fit_limit], time_ns[:fit_limit], bound, scales)
             amplitudes = popt[::2]
             taus = popt[1::2]
             order = (len(bound[0]) + 1) // 2
@@ -103,7 +103,7 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
             popt_dict = {
                 'rId_1': rid_1, 'rName_1': rname_list[rid_1 - 1],
                 'rId_2': rid_2, 'rName_2': rname_list[rid_2 - 1],
-                'limit': limit
+                'limit': fit_limit
             }
 
             popt_dict.update(
