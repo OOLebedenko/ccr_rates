@@ -46,5 +46,5 @@ data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.p
 	    --filetype="${FILETYPE}" \
 	    --pattern="${PATTERN}" \
 	    --trajectory-length="${TRAJECTORY_LENGTH}" \
-	    --vectors=C-O,C-CA,"${DD_VECTOR}" \
+	    --vectors="${VECTORS}" \
 	    --output-directory=../vectors/ \
