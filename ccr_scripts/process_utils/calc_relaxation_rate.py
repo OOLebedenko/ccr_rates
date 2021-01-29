@@ -3,19 +3,19 @@ import numpy as np
 
 def calc_dipole_interaction_const(gyromagnetic_ratio_atom_1,
                                   gyromagnetic_ratio_atom_2,
-                                  bond_length):
+                                  ):
     """
     calculation dipole-interaction constant
-    
+    on assumption of that bond length between atom_1 and atom_2 was taken into account in cross-correlation function
+
     :param gyromagnetic_ratio_atom_1: 
     :param gyromagnetic_ratio_atom_2: 
-    :param bond_length: bond legth between atom_1 and atom_2
     :return: dipole-interaction constant
     """
     h = 6.626069e-34
     mu_bohr = 4 * np.pi * 1e-7
     dipole_interaction_const = (mu_bohr / 4 / np.pi) * (h / 2 / np.pi)
-    return dipole_interaction_const * gyromagnetic_ratio_atom_1 * gyromagnetic_ratio_atom_2 * bond_length ** (-3)
+    return dipole_interaction_const * gyromagnetic_ratio_atom_1 * gyromagnetic_ratio_atom_2
 
 
 def calc_csa_axis_interaction_const(gyromagnetic_ratio_atom,

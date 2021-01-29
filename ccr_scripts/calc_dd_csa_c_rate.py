@@ -4,14 +4,13 @@ import argparse
 import numpy as np
 
 if __name__ == '__main__':
-    rCAHA = 1.09e-10
-    rNH = 1.02e-10
+
     gyromagnetic_ratio_dict = {"H1": 267.522e6,
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"]],
+                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]]}
 
     parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
