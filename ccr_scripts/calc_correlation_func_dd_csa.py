@@ -22,6 +22,14 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 
 if __name__ == '__main__':
 
+    rCAHA = 1.09e-10
+    rNH = 1.02e-10
+
+    dipole_dict = {"N-H": rNH,
+                   "CA-HA|HA2|HA3": rCAHA,
+                   "H-HA|HA2|HA3": None
+                   }
+
     parser = argparse.ArgumentParser(description='Calc DD-CSA ccr func')
     parser.add_argument('--path-to-metadata', required=True)
     parser.add_argument('--dipole', required=True)
@@ -39,5 +47,6 @@ if __name__ == '__main__':
 
     calc_and_save_crosscorr(ccr_pairs_csv_files,
                             weights=np.array(CSA_C * (len(ccr_pairs_csv_files) // 3)),
+                            bond_length_v1=dipole_dict[args.dipole],
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
