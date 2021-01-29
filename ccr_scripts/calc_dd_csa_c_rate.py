@@ -10,7 +10,9 @@ if __name__ == '__main__':
                                "C13": 67.2828e6}
 
     dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"]],
-                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]]}
+                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]],
+                   "H-HA|HA2|HA3": [gyromagnetic_ratio_dict["H1"], gyromagnetic_ratio_dict["H1"]],
+                   }
 
     parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
@@ -21,6 +23,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
+    interaction_const /= (1e-10) ** 3  # to convert distance from angstroms to meters
     B0 = args.nmr_freq / (gyromagnetic_ratio_dict["H1"] / 2 / np.pi)
     const = gyromagnetic_ratio_dict["C13"] * 2 * B0 * interaction_const / 3
 

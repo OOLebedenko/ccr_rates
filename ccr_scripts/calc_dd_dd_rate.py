@@ -24,5 +24,6 @@ if __name__ == '__main__':
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     interaction_const *= calc_dipole_interaction_const(*dipole_dict[args.dipole_2])
+    interaction_const /= (1e-10) ** 6   # to convert distance from angstroms to meters
 
     calc_and_save_remote_ccr_rate(args.path_to_fit_dir, interaction_const, output_directory=args.output_directory)
