@@ -23,7 +23,7 @@ data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${(N_RESIDUES - 1)}
 	    --limit="${FIT_LIMIT}" \
 	    --output-directory=data/fit/ \
 
-data/crosscorr/*${N_RESIDUES}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py ../../vectors/CSA-C/z/${N_RESIDUES}*.csv
+data/crosscorr/*${(N_RESIDUES - 1)}*.csv: ${SCRIPT_DIR}/calc_correlation_func_dd_csa.py ../../vectors/CSA-C/z/${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-metadata="../../vectors" \
 	    --dipole="${DD_VECTOR}" \

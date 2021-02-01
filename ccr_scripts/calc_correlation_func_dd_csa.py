@@ -27,7 +27,8 @@ if __name__ == '__main__':
 
     bond_length_dict = {"N-H": rNH,
                         "CA-HA|HA2|HA3": rCAHA,
-                        "HA|HA2|HA3-H": None
+                        "HA|HA2|HA3-H": None,
+                        "HA|HA2|HA3-Hp1": None
                         }
 
     parser = argparse.ArgumentParser(description='Calc DD-CSA ccr func')

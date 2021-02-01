@@ -12,6 +12,7 @@ if __name__ == '__main__':
     dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"]],
                    "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]],
                    "HA|HA2|HA3-H": [gyromagnetic_ratio_dict["H1"], gyromagnetic_ratio_dict["H1"]],
+                   "HA|HA2|HA3-Hp1": [gyromagnetic_ratio_dict["H1"], gyromagnetic_ratio_dict["H1"]],
                    }
 
     parser = argparse.ArgumentParser(description='Calc DD-CSA C relaxation rate')
