@@ -29,15 +29,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     CSA_C_x, CSA_C_y, CSA_C_z = 244e-6, 178e-6, 90e-6
-    CSA_C_x_axial = (CSA_C_x - CSA_C_z)
-    CSA_C_y_axial = (CSA_C_y - CSA_C_z)
+    CSA_C_x_axial = (CSA_C_x - CSA_C_z) / 3
+    CSA_C_y_axial = (CSA_C_y - CSA_C_z) / 3
 
     ccr_pairs_csv_files = extract_axial_xy_names_from_metadata_csa(args.path_to_csa_dir, args.shift_ind)
 
     calc_and_save_crosscorr(ccr_pairs_csv_files,
-                            weights=np.array([CSA_C_x_axial * CSA_C_x,
+                            weights=np.array([CSA_C_x_axial ** 2,
                                               CSA_C_x_axial * CSA_C_y_axial,
                                               CSA_C_y_axial * CSA_C_x_axial,
-                                              CSA_C_y_axial * CSA_C_y_axial]),
+                                              CSA_C_y_axial ** 2]),
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
