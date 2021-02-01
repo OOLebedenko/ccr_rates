@@ -52,3 +52,10 @@ def atom_pairs_from_one_residue(atom_names_1: Union[str, List[str]], atom_names_
         ]
 
     return selector
+
+
+def atom_pairs_selector(atom_names_1: Union[str, List[str]], atom_names_2: Union[str, List[str]], mode="one_residue"):
+    pairs_selection_dict = {"one_residue": atom_pairs_from_one_residue,
+                            "next_residue": atom_pairs_from_consequent_residues}
+
+    return pairs_selection_dict[mode](atom_names_1, atom_names_2)
