@@ -44,13 +44,14 @@ def autocorr(x):
     return np.real(result)
 
 def cross_correlation_using_fft(v1, v2):
-
     v1 = np.concatenate((v1, np.zeros(len(v1) - 1)))  # added zeros to signal
     v2 = np.concatenate((v2, np.zeros(len(v2) - 1)))  # added zeros to signal
     f1 = np.fft.fft(v1)
     f2 = np.fft.fft(v2)
     f2 = np.conj(f2)
     cc = np.real(np.fft.ifft(f1 * f2))
+    cc[1:(cc.size // 2) + 1] += cc[(cc.size // 2) + 1:][::-1]
+    cc[1:(cc.size // 2) + 1] /= 2
     cc = cc[:(cc.size // 2) + 1]
 
     return cc / np.linspace(len(cc), 1, len(cc))
