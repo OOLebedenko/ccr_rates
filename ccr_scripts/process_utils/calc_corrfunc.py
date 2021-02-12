@@ -2,35 +2,30 @@ import numpy as np
 
 
 def Y2m2(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
     coef = 1.0 / 4.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] - 1j * vectors[:, 1]) ** 2
 
 
 def Y2m1(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
     coef = 1.0 / 2.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] - 1j * vectors[:, 1]) * vectors[:, 2]
 
 
 def Y20(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
     coef = 1.0 / 4.0 * np.sqrt(5.0 / np.pi)
 
     return coef * (2.0 * vectors[:, 2] ** 2 - vectors[:, 0] ** 2 - vectors[:, 1] ** 2)
 
 
 def Y2p1(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
     coef = -1.0 / 2.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] + 1j * vectors[:, 1]) * vectors[:, 2]
 
 
 def Y2p2(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
     coef = 1.0 / 4.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] + 1j * vectors[:, 1]) ** 2
@@ -52,6 +47,8 @@ def cross_correlation_using_fft(v1, v2):
     f2 = np.fft.fft(v2)
     f2 = np.conj(f2)
     cc = np.real(np.fft.ifft(f1 * f2))
+    cc[1:(cc.size // 2) + 1] += cc[(cc.size // 2) + 1:][::-1]
+    cc[1:(cc.size // 2) + 1] /= 2
     cc = cc[:(cc.size // 2) + 1]
 
     return cc / np.linspace(len(cc), 1, len(cc))
