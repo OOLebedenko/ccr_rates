@@ -15,10 +15,19 @@ def extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, shift_ind):
 
 
 if __name__ == '__main__':
+
+    rCAHA = 1.09  # angstrom
+    rNH = 1.02  # angstrom
+
+    bond_length_dict = {"N-H": rNH,
+                   "CA-HA|HA2|HA3": rCAHA,
+                   "H-HA|HA2|HA3": None
+                        }
+
     parser = argparse.ArgumentParser(description='Calc DD-DD ccr func')
     parser.add_argument('--path-to-metadata', required=True)
-    parser.add_argument('--dipole-1', required=True)
-    parser.add_argument('--dipole-2', required=True)
+    parser.add_argument('--dipole-1', required=True, choices=bond_length_dict.keys())
+    parser.add_argument('--dipole-2', required=True, choices=bond_length_dict.keys())
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
@@ -29,5 +38,7 @@ if __name__ == '__main__':
     meta_vect_2 = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole_2)}.csv"))
 
     calc_and_save_crosscorr(extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, args.shift_ind),
+                            bond_length_v1=bond_length_dict[args.dipole_1],
+                            bond_length_v2=bond_length_dict[args.dipole_2],
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
