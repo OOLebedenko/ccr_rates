@@ -2,37 +2,38 @@ import numpy as np
 
 
 def Y2m2(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
+    vectors = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     coef = 1.0 / 4.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] - 1j * vectors[:, 1]) ** 2
 
+
 def Y2m1(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
+    vectors = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     coef = 1.0 / 2.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
-    return coef * (vectors[:,0] - 1j * vectors[:, 1]) * vectors[:, 2]
+    return coef * (vectors[:, 0] - 1j * vectors[:, 1]) * vectors[:, 2]
 
 
 def Y20(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
+    vectors = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     coef = 1.0 / 4.0 * np.sqrt(5.0 / np.pi)
 
     return coef * (2.0 * vectors[:, 2] ** 2 - vectors[:, 0] ** 2 - vectors[:, 1] ** 2)
 
 
 def Y2p1(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
+    vectors = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     coef = -1.0 / 2.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
     return coef * (vectors[:, 0] + 1j * vectors[:, 1]) * vectors[:, 2]
 
 
 def Y2p2(vectors):
-    result = np.zeros(len(vectors), dtype=complex)
+    vectors = vectors / np.linalg.norm(vectors, axis=1)[:, np.newaxis]
     coef = 1.0 / 4.0 * np.sqrt(15.0 / 2.0 / np.pi)
 
-    return coef * (vectors[:,0] + 1j * vectors[:,1]) ** 2
+    return coef * (vectors[:, 0] + 1j * vectors[:, 1]) ** 2
 
 
 def autocorr(x):
@@ -42,6 +43,7 @@ def autocorr(x):
     result = result[:len(x)]
     result /= np.linspace(len(x), 1, len(x))
     return np.real(result)
+
 
 def cross_correlation_using_fft(v1, v2):
     v1 = np.concatenate((v1, np.zeros(len(v1) - 1)))  # added zeros to signal
@@ -65,29 +67,16 @@ def autocorr_all_harmonics(r):
     return 4.0 * np.pi / 5.0 * np.sum(res, axis=0)
 
 
-def crosscorr_all_harmonics(v1, v2):
-    v1 = v1 / np.linalg.norm(v1, axis=1)[:, np.newaxis]
-    v2 = v2 / np.linalg.norm(v2, axis=1)[:, np.newaxis]
+def crosscorr_all_harmonics(v1, v2, bond_length_v1=None, bond_length_v2=None):
 
-    Y_func_v1 = [Y2m2(v1), Y2m1(v1), Y20(v1)]
-    Y_func_v2 = [Y2m2(v2), Y2m1(v2), Y20(v2)]
-    res = [cross_correlation_using_fft(f1, f2) for f1, f2 in zip(Y_func_v1, Y_func_v2)]
-    res[0] = 2.0 * res[0]
-    res[1] = 2.0 * res[1]
-    return 4.0 * np.pi / 5.0 * np.sum(res, axis=0)
+    norm_v1 = bond_length_v1 if bond_length_v1 else np.linalg.norm(v1, axis=1)
+    norm_v2 = bond_length_v2 if bond_length_v2 else np.linalg.norm(v2, axis=1)
 
+    Y_func_v1 = np.array([Y2m2(v1), Y2m1(v1), Y20(v1)])
+    Y_func_v2 = np.array([Y2m2(v2), Y2m1(v2), Y20(v2)])
 
-def crosscorr_all_harmonics_with_radial(v1, v2):
-    norm_v1 = np.linalg.norm(v1, axis=1)
-    norm_v2 = np.linalg.norm(v2, axis=1)
-    v1 = v1 / norm_v1[:, np.newaxis]
-    v2 = v2 / norm_v2[:, np.newaxis]
-
-    Y_func_v1 = [Y2m2(v1), Y2m1(v1), Y20(v1)]
-    Y_func_v2 = [Y2m2(v2), Y2m1(v2), Y20(v2)]
     res = [cross_correlation_using_fft(f1, f2) for f1, f2
            in zip(Y_func_v1 * norm_v1 ** (-3), Y_func_v2 * norm_v2 ** (-3))]
-
     res[0] = 2.0 * res[0]
     res[1] = 2.0 * res[1]
     return 4.0 * np.pi / 5.0 * np.sum(res, axis=0)

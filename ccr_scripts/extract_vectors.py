@@ -1,4 +1,4 @@
-from ccr_scripts.process_utils.select import atom_pairs_from_one_residue, atom_pairs_from_consequent_residues
+from ccr_scripts.process_utils.select import *
 from ccr_scripts.save_utils import vector_name_to_basename
 from pyxmolpp2 import Trajectory, PdbFile, Atom, TrjtoolDatFile, GromacsXtcFile, AmberNetCDF
 from pyxmolpp2.pipe import WriteVectorsToCsv, Run
@@ -9,12 +9,14 @@ import operator
 import os
 import csv
 
+
 class XtcFileReaderWrapper:
     def __init__(self, n_frames):
         self.n_frames = n_frames
 
     def __call__(self, filename):
         return GromacsXtcFile(filename, self.n_frames)
+
 
 class WriteVectorsToCsvWithMetadata(WriteVectorsToCsv):
     headers = ["rId_1", "aName_1", "rId_2", "aName_2", "filename"]
@@ -64,7 +66,10 @@ if __name__ == '__main__':
 
     trj_reader_dict = {"dat": TrjtoolDatFile,
                        "nc": AmberNetCDF,
-                       "xtc":  XtcFileReaderWrapper(args.frames_per_trajectory_file)}
+                       "xtc": XtcFileReaderWrapper(args.frames_per_trajectory_file)}
+
+    subdir_prefix = {"one_residue": "",
+                     "next_residue": "p1"}
 
     traj = Trajectory(PdbFile(args.path_to_reference_pdb).frames()[0])
     for ind in tqdm(range(1, args.trajectory_length + 1), desc="traj_reading"):
@@ -73,11 +78,12 @@ if __name__ == '__main__':
 
     processes = []
     for vector in args.vectors.split(","):
-        atom_1, atom_2 = vector.split("-")
-        subdir = vector_name_to_basename(vector)
+        atom_pair, residue_mode = vector.split("_", 1)
+        atom_1, atom_2 = atom_pair.split("-")
+        subdir = f"{vector_name_to_basename(atom_pair)}{subdir_prefix[residue_mode]}"
         processes.append(
             WriteVectorsToCsvWithMetadata(
-                atom_pairs_from_one_residue(atom_1.split("|"), atom_2.split("|")),
+                atom_pairs_selector(atom_1.split("|"), atom_2.split("|"), mode=residue_mode),
                 OutputFilenameFormatter(os.path.join(args.output_directory, subdir)),
                 meta_filename=f"{os.path.join(args.output_directory)}/{subdir}.csv"
             )

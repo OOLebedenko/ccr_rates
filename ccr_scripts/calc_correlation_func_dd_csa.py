@@ -14,7 +14,7 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
         fnames_1 = meta_vect[meta_vect["rId_1"] == (rid)]["filename"]
         if not fnames_1.empty and (sorted(rids)[0] <= (rid + shift_ind) <= sorted(rids)[-1]):
             fnames_2 = [os.path.join(args.path_to_csa_dir, axis,
-                        f"{rid + shift_ind:02d}_{axis}_axis.csv") for axis in ["x", "y", "z"]]
+                                     f"{rid + shift_ind:02d}_{axis}_axis.csv") for axis in ["x", "y", "z"]]
             ccr_pairs_csv_files.append((fnames_1.values, fnames_2))
 
     return ccr_pairs_csv_files
@@ -22,9 +22,18 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 
 if __name__ == '__main__':
 
+    rCAHA = 1.09  # angstrom
+    rNH = 1.02  # angstrom
+
+    bond_length_dict = {"N-H": rNH,
+                        "CA-HA|HA2|HA3": rCAHA,
+                        "HA|HA2|HA3-H": None,
+                        "HA|HA2|HA3-Hp1": None
+                        }
+
     parser = argparse.ArgumentParser(description='Calc DD-CSA ccr func')
     parser.add_argument('--path-to-metadata', required=True)
-    parser.add_argument('--dipole', required=True)
+    parser.add_argument('--dipole', required=True, choices=bond_length_dict.keys())
     parser.add_argument('--path-to-csa-dir', required=True)
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
@@ -39,5 +48,6 @@ if __name__ == '__main__':
 
     calc_and_save_crosscorr(ccr_pairs_csv_files,
                             weights=np.array(CSA_C * (len(ccr_pairs_csv_files) // 3)),
+                            bond_length_v1=bond_length_dict[args.dipole],
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
