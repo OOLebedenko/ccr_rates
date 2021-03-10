@@ -144,13 +144,15 @@ def calc_and_save_remote_ccr_rate(path_to_fit_dir,
                                   output_directory="./",
                                   out_name='ccr.csv'
                                   ):
-    combined_df = pd.DataFrame()
-    fits = ["tau_2_exp.csv"]
-    for fit in fits:
-        path_to_fit_csv = os.path.join(path_to_fit_dir, fit)
-        fit_df = pd.read_csv(path_to_fit_csv)
-        rate_table = pd.DataFrame()
-        for ind, fit_line in fit_df.iterrows():
+    path_to_fit_csv = sorted(glob(os.path.join(path_to_fit_dir, "tau_*_exp.csv")))[-1]
+    fit_df = pd.read_csv(path_to_fit_csv)
+    rate_table = pd.DataFrame()
+
+    for rId_1, fit_line_group_by_rId in fit_df.groupby("rId_1"):
+
+        rate = []
+        D = {}
+        for _, fit_line in fit_line_group_by_rId.iterrows():
             amplitude = fit_line.filter(like='-a').values
             taus = fit_line.filter(like='-tau').values
             taus_s = taus * 1e-9
