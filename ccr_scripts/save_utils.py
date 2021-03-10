@@ -67,8 +67,7 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
                                     bond_length_v1=bond_length_v1,
                                     bond_length_v2=bond_length_v2
                                     )
-        # out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
-        #            os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
+
         out_name = f"{os.path.splitext(os.path.basename(path_to_v1_files[0]))[0]}--{os.path.splitext(os.path.basename(path_to_v2_files[0]))[0]}.csv"
 
         if index is None:
@@ -117,11 +116,12 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
             amplitudes = popt[::2]
             taus = popt[1::2]
 
-            rid_1, rid_2 = list(map(int, name.split("-")))
+            vector_1, vector_2 = name.split("--")
+            rid_1, rid_2 = int(vector_1.split("_")[0]), int(vector_2.split("_")[0])
 
             popt_dict = {
-                'rId_1': rid_1, 'rName_1': residue_name_map[rid_1],
-                'rId_2': rid_2, 'rName_2': residue_name_map[rid_2],
+                'rId_1': rid_1, 'rName_1': residue_name_map[rid_1], "vect_1": vector_1,
+                'rId_2': rid_2, 'rName_2': residue_name_map[rid_2], "vect_2": vector_2,
                 'limit': fit_limit
             }
 
