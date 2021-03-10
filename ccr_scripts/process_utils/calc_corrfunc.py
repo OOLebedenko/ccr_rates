@@ -52,6 +52,8 @@ def cross_correlation_using_fft(v1, v2):
     f2 = np.fft.fft(v2)
     f2 = np.conj(f2)
     cc = np.real(np.fft.ifft(f1 * f2))
+    cc[1:(cc.size // 2) + 1] += cc[(cc.size // 2) + 1:][::-1]
+    cc[1:(cc.size // 2) + 1] /= 2
     cc = cc[:(cc.size // 2) + 1]
 
     return cc / np.linspace(len(cc), 1, len(cc))
