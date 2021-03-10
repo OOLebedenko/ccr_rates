@@ -32,7 +32,7 @@ def save_csa_c_pas(path_to_CO_vectors,
         csa_c_y_axis = extract_csa_c_y_axis(CO_vectors, csa_c_z_axis)
         for csa_axis, axis in zip([csa_c_x_axis, csa_c_y_axis, csa_c_z_axis], ["x", "y", "z"]):
             pd.DataFrame(csa_axis, columns=["x", "y", "z"]).to_csv(
-                os.path.join(output_directory, axis, f"{r_id}_{axis}_axis.csv"), index=False)
+                os.path.join(output_directory, axis, f"{r_id}_CSA_C.csv"), index=False)
 
 
 def calc_crosscorr(path_to_v1_files,
@@ -60,7 +60,6 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
                             out_dir="."
                             ):
     index = None
-
     for path_to_v1_files, path_to_v2_files in tqdm(pairs_vectors_csv_files):
 
         cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files,
@@ -68,8 +67,9 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
                                     bond_length_v1=bond_length_v1,
                                     bond_length_v2=bond_length_v2
                                     )
-        out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
-                   os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
+        # out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
+        #            os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
+        out_name = f"{os.path.splitext(os.path.basename(path_to_v1_files[0]))[0]}--{os.path.splitext(os.path.basename(path_to_v2_files[0]))[0]}.csv"
 
         if index is None:
             index = len(cross_corr)
