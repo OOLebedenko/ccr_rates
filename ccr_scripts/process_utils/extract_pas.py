@@ -17,7 +17,7 @@ def extract_csa_c_z_axis(CO_vectors, C_CA_vectors):
     C_CA_vectors /= np.linalg.norm(C_CA_vectors, axis=1)[:, np.newaxis]
     CO_vectors /= np.linalg.norm(CO_vectors, axis=1)[:, np.newaxis]
     z_axis = np.cross(CO_vectors, C_CA_vectors, axis=1)
-    return z_axis
+    return z_axis / np.linalg.norm(z_axis, axis=1)[:, np.newaxis]
 
 
 def extract_csa_c_x_axis(CO_vectors, csa_c_z_axis):

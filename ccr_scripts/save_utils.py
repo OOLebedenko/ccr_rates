@@ -10,7 +10,10 @@ import numpy as np
 from typing import Dict
 
 
-def save_csa_c_pas(path_to_CO_vectors, path_to_C_CA_vectors, output_directory):
+def save_csa_c_pas(path_to_CO_vectors,
+                   path_to_C_CA_vectors,
+                   output_directory
+                   ):
     CO_files = sorted(glob(os.path.join(path_to_CO_vectors, "*.csv")))
     C_CA_files = sorted(glob(os.path.join(path_to_C_CA_vectors, "*.csv")))
     assert len(CO_files) == len(C_CA_files)
@@ -32,25 +35,39 @@ def save_csa_c_pas(path_to_CO_vectors, path_to_C_CA_vectors, output_directory):
                 os.path.join(output_directory, axis, f"{r_id}_{axis}_axis.csv"), index=False)
 
 
-def calc_crosscorr(path_to_v1_files, path_to_v2_files, weights=None):
+def calc_crosscorr(path_to_v1_files,
+                   path_to_v2_files,
+                   weights=None,
+                   bond_length_v1=None,
+                   bond_length_v2=None
+                   ):
     sum_ccr = []
     for path_to_v1_file in path_to_v1_files:
         for path_to_v2_file in path_to_v2_files:
             vectors_1 = pd.read_csv(path_to_v1_file).values
             vectors_2 = pd.read_csv(path_to_v2_file).values
-            sum_ccr.append(crosscorr_all_harmonics(vectors_1, vectors_2))
+            sum_ccr.append(crosscorr_all_harmonics(vectors_1, vectors_2, bond_length_v1, bond_length_v2))
     if weights is None:
         weights = np.ones(len(sum_ccr))
     cross_corr = [weight * ccr_func for weight, ccr_func in zip(weights, sum_ccr)]
     return np.array(cross_corr).sum(axis=0)
 
 
-def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns, weights=None, out_dir="."):
+def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
+                            weights=None,
+                            bond_length_v1=None,
+                            bond_length_v2=None,
+                            out_dir="."
+                            ):
     index = None
 
     for path_to_v1_files, path_to_v2_files in tqdm(pairs_vectors_csv_files):
 
-        cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files, weights)
+        cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files,
+                                    weights=weights,
+                                    bond_length_v1=bond_length_v1,
+                                    bond_length_v2=bond_length_v2
+                                    )
         out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
                    os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
 
@@ -69,7 +86,8 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
                                 scales,
                                 residue_name_map: Dict[int, str],
                                 output_directory="./",
-                                limit=None):
+                                limit=None
+                                ):
     def fit_one_corr_fucnc(corr, time, bounds, scales):
         corr_0 = corr[0]
         popt = bounds_scaled_fit_auto_correlation(time=time,
@@ -121,7 +139,11 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
         tau_table.to_csv(os.path.join(output_directory, f'tau_{order}_exp.csv'), index=False)
 
 
-def calc_and_save_remote_ccr_rate(path_to_fit_dir, interaction_const, output_directory="./", out_name='ccr.csv'):
+def calc_and_save_remote_ccr_rate(path_to_fit_dir,
+                                  interaction_const,
+                                  output_directory="./",
+                                  out_name='ccr.csv'
+                                  ):
     combined_df = pd.DataFrame()
     fits = ["tau_2_exp.csv"]
     for fit in fits:

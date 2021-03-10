@@ -10,8 +10,8 @@ if __name__ == '__main__':
                                "N15": -27.126e6,
                                "C13": 67.2828e6}
 
-    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"], rNH],
-                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"], rCAHA]}
+    dipole_dict = {"N-H": [gyromagnetic_ratio_dict["N15"], gyromagnetic_ratio_dict["H1"]],
+                   "CA-HA|HA2|HA3": [gyromagnetic_ratio_dict["C13"], gyromagnetic_ratio_dict["H1"]]}
 
     parser = argparse.ArgumentParser(description='Calc DD-DD relaxation rate')
     parser.add_argument('--path-to-fit-dir', required=True, )
@@ -24,5 +24,6 @@ if __name__ == '__main__':
 
     interaction_const = calc_dipole_interaction_const(*dipole_dict[args.dipole_1])
     interaction_const *= calc_dipole_interaction_const(*dipole_dict[args.dipole_2])
+    interaction_const /= (1e-10) ** 6   # to convert distance from angstroms to meters
 
     calc_and_save_remote_ccr_rate(args.path_to_fit_dir, interaction_const, output_directory=args.output_directory)
