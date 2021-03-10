@@ -156,16 +156,15 @@ def calc_and_save_remote_ccr_rate(path_to_fit_dir,
             amplitude = fit_line.filter(like='-a').values
             taus = fit_line.filter(like='-tau').values
             taus_s = taus * 1e-9
-            rate = calc_remote_ccr_rates(interaction_const, amplitude, taus_s)
-            D = {'rId_1': fit_line["rId_1"], 'rId_2': fit_line["rId_2"], "relaxation_rate": rate}
-            rate_table = pd.concat([rate_table, pd.DataFrame(D, index=[0])])
-        if combined_df.empty:
-            combined_df = rate_table
-        else:
-            combined_df = pd.merge(combined_df, rate_table, left_index=False, right_index=False)
+            rate.append(calc_remote_ccr_rates(interaction_const, amplitude, taus_s))
+            D['rId_1'] = fit_line["rId_1"]
+            D['rId_2'] = fit_line["rId_2"]
+        D["relaxation_rate"] = sum(rate)
+        rate_table = pd.concat([rate_table, pd.DataFrame(D, index=[0])])
+
     os.makedirs(output_directory, exist_ok=True)
-    combined_df.to_csv(os.path.join(output_directory, out_name), index=False)
-    return combined_df
+    rate_table.to_csv(os.path.join(output_directory, out_name), index=False)
+    return rate_table
 
 
 def vector_name_to_basename(vector_atom_names_str):
