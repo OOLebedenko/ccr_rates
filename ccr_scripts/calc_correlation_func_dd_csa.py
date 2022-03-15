@@ -22,7 +22,6 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 
 
 if __name__ == '__main__':
-
     rCAHA = 1.09  # angstrom
     rNH = 1.02  # angstrom
 
