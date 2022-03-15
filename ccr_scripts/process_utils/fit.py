@@ -41,7 +41,7 @@ def estimate_acorr_fitting_limit(data: List[Union[float, int]],
 def __multi_exp_f(x: Union[float, int],
                   A: List[Union[float, int]],
                   TAU: List[Union[float, int]],
-                  C: Union[float, int]) -> float:
+                  C: Union[float, int] = 0) -> float:
     """
     :param x: argument of some exponential functions composition
     :param A: array of amplitudes
@@ -78,22 +78,16 @@ def multi_exp_fixed_amplitude_1(x: Union[float, int], *args):
     :param args: array of amplitudes and time constants
     :return: callable __multi_exp_f
     """
-    TAU = args[0::2]
+    TAU = args[1::2]
+    A = np.abs(args[::2]) / sum(args[::2])
 
-    if len(args) % 2 == 1:
-        C = 0
-        A = args[1:-1:2]
-    else:
-        C = args[-1]
-        A = args[1:-1:2]
-    A0 = 1 - sum(A) - C
-    return __multi_exp_f(x, [A0] + list(A), TAU, C)
+    return __multi_exp_f(x, A, TAU)
 
 
-def fit_auto_correlation(time: List[float],
-                         acorr: List[float],
-                         bounds: List[List[List[Union[float, int]]]]) \
-        -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
+def fit_corrfunc_amp_fixed_1(time: List[float],
+                             acorr: List[float],
+                             bounds: List[List[List[Union[float, int]]]]) \
+        -> Union[np.ndarray, Iterable, int, float]:
     """
     Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
 
@@ -103,30 +97,47 @@ def fit_auto_correlation(time: List[float],
     :return: Fit curve parameters
     """
 
-    p0 = np.mean(bounds, axis=0)[1:]
+    p0 = np.mean(bounds, axis=0)
 
     args, pcov = curve_fit(multi_exp_fixed_amplitude_1,
                            time,
                            acorr,
                            p0=p0,
-                           bounds=np.array(bounds)[:, 1:])
+                           bounds=np.array(bounds))
+    args[::2] = np.abs(args[::2]) / sum(args[::2])
 
-    if len(args) % 2 == 1:
-        C = 0
-        A = args[1:-1:2]
-    else:
-        C = args[-1]
-        A = args[1:-1:2]
-    A0 = 1 - sum(A) - C
+    return list(args)
 
-    return [A0] + list(args)
+
+def fit_corrfunc_amp_unfixed(time: List[float],
+                             acorr: List[float],
+                             bounds: List[List[List[Union[float, int]]]]) \
+        -> Union[np.ndarray, Iterable, int, float]:
+    """
+    Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
+
+    :param time: time data series
+    :param acorr: auto-correlation data series
+    :param bounds: curve parameters bounds
+    :return: Fit curve parameters
+    """
+
+    p0 = np.mean(bounds, axis=0)
+
+    args, pcov = curve_fit(multi_exp_unfixed_amplitude,
+                           time,
+                           acorr,
+                           p0=p0,
+                           bounds=np.array(bounds))
+
+    return list(args)
 
 
 def bounds_scaled_fit_auto_correlation(time: List[float],
                                        corr: List[float],
                                        bounds: List[List[Union[float, int]]],
                                        scales=None,
-                                       fit_func=multi_exp_fixed_amplitude_1
+                                       fit_func=fit_corrfunc_amp_fixed_1
                                        ) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
@@ -153,8 +164,8 @@ def bounds_scaled_fit_auto_correlation(time: List[float],
         scale_times(bounds[0], scale)
         scale_times(bounds[1], scale)
         try:
-            popt = fit_auto_correlation(time, corr, bounds)
-            R_square.append(sum((np.array(corr) - np.array(fit_func(time, *popt))) ** 2))
+            popt = fit_func(time, corr, bounds)
+            R_square.append(sum((np.array(corr) - np.array(multi_exp_unfixed_amplitude(time, *popt))) ** 2))
             popt_all.append(popt)
         except RuntimeError:
             print("Fit error n={}, scale={}".format(len(bounds[0]) // 2, scale))
@@ -165,24 +176,3 @@ def bounds_scaled_fit_auto_correlation(time: List[float],
     min_ind_r_square = np.argmin(R_square)
 
     return popt_all[min_ind_r_square]
-
-
-def fit_msd(msd: List[float],
-            time: List[float],
-            N=5,
-            ) -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
-    """
-    Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
-    :param msd: msd data
-    :param time: time for msd
-    :return: Fit curve parameters
-    """
-
-    def linear_fit(x, k):
-        return k * x
-
-    popts, _ = curve_fit(linear_fit,
-                         time[:N],
-                         msd[:N]
-                         )
-    return popts
