@@ -7,7 +7,7 @@ clean:
 	rm -rf data
 
 
-data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_csa_c_csa_c_rate.py data/fit/tau_2_exp.csv
+data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_csa_c_csa_c_rate.py data/fit/tau_4_exp.csv
 	python3 "$<" \
 	    --path-to-fit-dir=data/fit \
 	    --nmr-freq="${NMR_FREQ}" \
@@ -15,7 +15,7 @@ data/relaxation_rate/ccr*.csv: ${SCRIPT_DIR}/calc_csa_c_csa_c_rate.py data/fit/t
 	    --output-directory=data/relaxation_rate \
 
 
-data/fit/tau_2_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
+data/fit/tau_4_exp.csv: ${SCRIPT_DIR}/fit.py data/crosscorr/*${N_RESIDUES}*.csv
 	python3 "$<" \
 	    --path-to-crosscorr-csv=data/crosscorr/ \
 	    --path-to-reference-pdb="${REFERENCE_PDB_PATH}" \
