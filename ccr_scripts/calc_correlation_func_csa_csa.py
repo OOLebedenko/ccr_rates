@@ -11,9 +11,9 @@ def extract_axial_xy_names_from_metadata_csa(path_to_csa_dir, shift_ind):
     ccr_pairs_csv_files = []
 
     for rid in sorted(rids):
-        fnames_1 = [os.path.join(args.path_to_csa_dir, axis, f"{rid:02d}_{axis}_axis.csv") for axis in ["x", "y"]]
+        fnames_1 = [os.path.join(args.path_to_csa_dir, axis, f"{rid:02d}_CSA_C.csv") for axis in ["x", "y"]]
         if fnames_1 and (sorted(rids)[0] <= (rid + shift_ind) <= sorted(rids)[-1]):
-            fnames_2 = [os.path.join(args.path_to_csa_dir, axis, f"{rid + shift_ind:02d}_{axis}_axis.csv") for axis in ["x", "y"]]
+            fnames_2 = [os.path.join(args.path_to_csa_dir, axis, f"{rid + shift_ind:02d}_CSA_C.csv") for axis in ["x", "y"]]
             ccr_pairs_csv_files.append((fnames_1, fnames_2))
 
     return ccr_pairs_csv_files

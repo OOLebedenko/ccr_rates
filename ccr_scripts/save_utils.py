@@ -33,7 +33,7 @@ def save_csa_c_pas(path_to_CO_vectors,
         csa_c_y_axis = extract_csa_c_y_axis(CO_vectors, csa_c_z_axis)
         for csa_axis, axis in zip([csa_c_x_axis, csa_c_y_axis, csa_c_z_axis], ["x", "y", "z"]):
             pd.DataFrame(csa_axis, columns=["x", "y", "z"]).to_csv(
-                os.path.join(output_directory, axis, f"{r_id}_{axis}_axis.csv"), index=False)
+                os.path.join(output_directory, axis, f"{r_id}_CSA_C.csv"), index=False)
 
 
 def calc_crosscorr(path_to_v1_files,
@@ -61,7 +61,6 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
                             out_dir="."
                             ):
     index = None
-
     for path_to_v1_files, path_to_v2_files in tqdm(pairs_vectors_csv_files):
 
         cross_corr = calc_crosscorr(path_to_v1_files, path_to_v2_files,
@@ -69,8 +68,8 @@ def calc_and_save_crosscorr(pairs_vectors_csv_files, dt_ns,
                                     bond_length_v1=bond_length_v1,
                                     bond_length_v2=bond_length_v2
                                     )
-        out_name = os.path.basename(path_to_v1_files[0]).split("_")[0] + "-" + \
-                   os.path.basename(path_to_v2_files[0]).split("_")[0] + ".csv"
+
+        out_name = f"{os.path.splitext(os.path.basename(path_to_v1_files[0]))[0]}--{os.path.splitext(os.path.basename(path_to_v2_files[0]))[0]}.csv"
 
         if index is None:
             index = len(cross_corr)
@@ -120,11 +119,12 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
             amplitudes = popt[::2]
             taus = popt[1::2]
 
-            rid_1, rid_2 = list(map(int, name.split("-")))
+            vector_1, vector_2 = name.split("--")
+            rid_1, rid_2 = int(vector_1.split("_")[0]), int(vector_2.split("_")[0])
 
             popt_dict = {
-                'rId_1': rid_1, 'rName_1': residue_name_map[rid_1],
-                'rId_2': rid_2, 'rName_2': residue_name_map[rid_2],
+                'rId_1': rid_1, 'rName_1': residue_name_map[rid_1], "vect_1": vector_1,
+                'rId_2': rid_2, 'rName_2': residue_name_map[rid_2], "vect_2": vector_2,
                 'limit': fit_limit
             }
 
@@ -147,26 +147,27 @@ def calc_and_save_remote_ccr_rate(path_to_fit_dir,
                                   output_directory="./",
                                   out_name='ccr.csv'
                                   ):
-    combined_df = pd.DataFrame()
-    fits = [sorted(glob(os.path.join(path_to_fit_dir, "tau_*_exp.csv")))[-1]]
-    for path_to_fit_csv in fits:
-        # path_to_fit_csv = os.path.join(path_to_fit_dir, fit)
-        fit_df = pd.read_csv(path_to_fit_csv)
-        rate_table = pd.DataFrame()
-        for ind, fit_line in fit_df.iterrows():
+    path_to_fit_csv = sorted(glob(os.path.join(path_to_fit_dir, "tau_*_exp.csv")))[-1]
+    fit_df = pd.read_csv(path_to_fit_csv)
+    rate_table = pd.DataFrame()
+
+    for rId_1, fit_line_group_by_rId in fit_df.groupby("rId_1"):
+
+        rate = []
+        D = {}
+        for _, fit_line in fit_line_group_by_rId.iterrows():
             amplitude = fit_line.filter(like='-a').values
             taus = fit_line.filter(like='-tau').values
             taus_s = taus * 1e-9
-            rate = calc_remote_ccr_rates(interaction_const, amplitude, taus_s)
-            D = {'rId_1': fit_line["rId_1"], 'rId_2': fit_line["rId_2"], "relaxation_rate": rate}
-            rate_table = pd.concat([rate_table, pd.DataFrame(D, index=[0])])
-        if combined_df.empty:
-            combined_df = rate_table
-        else:
-            combined_df = pd.merge(combined_df, rate_table, left_index=False, right_index=False)
+            rate.append(calc_remote_ccr_rates(interaction_const, amplitude, taus_s))
+            D['rId_1'] = fit_line["rId_1"]
+            D['rId_2'] = fit_line["rId_2"]
+        D["relaxation_rate"] = sum(rate)
+        rate_table = pd.concat([rate_table, pd.DataFrame(D, index=[0])])
+
     os.makedirs(output_directory, exist_ok=True)
-    combined_df.to_csv(os.path.join(output_directory, out_name), index=False)
-    return combined_df
+    rate_table.to_csv(os.path.join(output_directory, out_name), index=False)
+    return rate_table
 
 
 def vector_name_to_basename(vector_atom_names_str):

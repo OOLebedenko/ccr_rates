@@ -12,10 +12,11 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
     ccr_pairs_csv_files = []
     for rid in sorted(rids):
         fnames_1 = meta_vect[meta_vect["rId_1"] == (rid)]["filename"]
-        if not fnames_1.empty and (sorted(rids)[0] <= (rid + shift_ind) <= sorted(rids)[-1]):
-            fnames_2 = [os.path.join(args.path_to_csa_dir, axis,
-                                     f"{rid + shift_ind:02d}_{axis}_axis.csv") for axis in ["x", "y", "z"]]
-            ccr_pairs_csv_files.append((fnames_1.values, fnames_2))
+        for fname in fnames_1:
+            if not fnames_1.empty and (sorted(rids)[0] <= (rid + shift_ind) <= sorted(rids)[-1]):
+                fnames_2 = [os.path.join(args.path_to_csa_dir, axis,
+                                         f"{rid + shift_ind:02d}_CSA_C.csv") for axis in ["x", "y", "z"]]
+                ccr_pairs_csv_files.append(([fname], fnames_2))
 
     return ccr_pairs_csv_files
 
@@ -45,7 +46,9 @@ if __name__ == '__main__':
 
     ccr_pairs_csv_files = extract_pairvect_names_from_metadata_csa(meta_vect, args.path_to_csa_dir, args.shift_ind)
 
+
     calc_and_save_crosscorr(ccr_pairs_csv_files,
-                            weights=np.array(CSA_C * (len(ccr_pairs_csv_files) // 3)),
+                            weights=np.array(CSA_C * (len(ccr_pairs_csv_files))),
+                            bond_length_v1=bond_length_dict[args.dipole],
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
