@@ -1,4 +1,5 @@
-from ccr_scripts.process_utils.fit import bounds_scaled_fit_auto_correlation, estimate_acorr_fitting_limit
+from ccr_scripts.process_utils.fit import bounds_scaled_fit_auto_correlation, estimate_acorr_fitting_limit, \
+    multi_exp_fixed_amplitude_1
 from ccr_scripts.process_utils.calc_corrfunc import crosscorr_all_harmonics
 from ccr_scripts.process_utils.extract_pas import extract_csa_c_z_axis, extract_csa_c_y_axis, extract_csa_c_x_axis
 from ccr_scripts.process_utils.calc_relaxation_rate import calc_remote_ccr_rates
@@ -86,7 +87,8 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
                                 scales,
                                 residue_name_map: Dict[int, str],
                                 output_directory="./",
-                                limit=None
+                                limit=None,
+                                fit_func=multi_exp_fixed_amplitude_1
                                 ):
     def fit_one_corr_fucnc(corr, time, bounds, scales):
         corr_0 = corr[0]
@@ -94,6 +96,7 @@ def fit_and_save_crosscorr_func(path_to_cross_corr_files,
                                                   corr=corr / corr_0,
                                                   bounds=bounds,
                                                   scales=scales,
+                                                  fit_func=fit_func
                                                   )
         popt[::2] = np.array(popt[::2]) * corr_0
 
@@ -145,9 +148,9 @@ def calc_and_save_remote_ccr_rate(path_to_fit_dir,
                                   out_name='ccr.csv'
                                   ):
     combined_df = pd.DataFrame()
-    fits = ["tau_2_exp.csv"]
-    for fit in fits:
-        path_to_fit_csv = os.path.join(path_to_fit_dir, fit)
+    fits = [sorted(glob(os.path.join(path_to_fit_dir, "tau_*_exp.csv")))[-1]]
+    for path_to_fit_csv in fits:
+        # path_to_fit_csv = os.path.join(path_to_fit_dir, fit)
         fit_df = pd.read_csv(path_to_fit_csv)
         rate_table = pd.DataFrame()
         for ind, fit_line in fit_df.iterrows():
