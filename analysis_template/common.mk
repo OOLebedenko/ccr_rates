@@ -1,5 +1,12 @@
 SCRIPT_DIR:=${HOME}/Projects/cross_relaxation_pyxmolpp2_v2/ccr_rates/ccr_scripts
 
+## Protein parameters:
+# specify number of residues
+N_RESIDUES=76
+
+## NMR parameters:
+NMR_FREQ=500e6
+
 ## MD traj parameters
 TRAJECTORY_PATH=${HOME}/Projects/cross_relaxation_pyxmolpp2_v2/ccr_rates/tests/example_xtc_trj_ubq_NPT_bussi_box_8
 REFERENCE_PDB_PATH:=${TRAJECTORY_PATH}/run00001.pdb
@@ -19,3 +26,7 @@ VECTOR_4=C-CA_one_residue
 VECTOR_5=HA|HA2|HA3-H_one_residue
 VECTOR_6=HA|HA2|HA3-H_next_residue
 VECTORS=${VECTOR_1},${VECTOR_2},${VECTOR_3},${VECTOR_4},${VECTOR_5},${VECTOR_6}
+
+## Fit cross-correlation function parameters
+#Length of fit in DT_NS units, e.g. FIT_LIMIT=5000 and DT_NS=0.001 correspond to 5 ns
+FIT_LIMIT=5000
