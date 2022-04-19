@@ -15,8 +15,8 @@ def extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, shift_ind):
 
 
 if __name__ == '__main__':
-    rCAHA = 1.09  # angstrom
-    rNH = 1.02  # angstrom
+    rCAHA = 1.108  # angstrom
+    rNH = 1.020  # angstrom
 
     bond_length_dict = {"N-H": rNH,
                         "CA-HA|HA2|HA3": rCAHA,

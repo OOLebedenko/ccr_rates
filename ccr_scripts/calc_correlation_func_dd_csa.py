@@ -22,8 +22,8 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 
 
 if __name__ == '__main__':
-    rCAHA = 1.09  # angstrom
-    rNH = 1.02  # angstrom
+    rCAHA = 1.108  # angstrom
+    rNH = 1.020  # angstrom
 
     bond_length_dict = {"N-H": rNH,
                         "CA-HA|HA2|HA3": rCAHA,
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
 
-    CSA_C = [244e-6, 178e-6, 90e-6]
+    CSA_C = [244e-6, 178e-6, 90e-6] # Teng et. all 1992
 
     meta_vect = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole)}.csv"))
 
