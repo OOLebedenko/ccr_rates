@@ -1,4 +1,5 @@
 from ccr_scripts.process_utils.select import *
+from ccr_scripts.process_utils.pipe import ScaleBonds
 from ccr_scripts.save_utils import vector_name_to_basename
 from pyxmolpp2 import Trajectory, PdbFile, Atom, TrjtoolDatFile, GromacsXtcFile, AmberNetCDF
 from pyxmolpp2.pipe import WriteVectorsToCsv, Run
@@ -71,11 +72,13 @@ if __name__ == '__main__':
     subdir_prefix = {"one_residue": "",
                      "next_residue": "p1"}
 
+    # load trajectory
     traj = Trajectory(PdbFile(args.path_to_reference_pdb).frames()[0])
     for ind in tqdm(range(1, args.trajectory_length + 1), desc="traj_reading"):
         fname = "{pattern}.{filetype}".format(pattern=args.pattern, filetype=args.filetype)
         traj.extend(trj_reader_dict[args.filetype](os.path.join(args.path_to_trajectory, fname % (ind))))
 
+    # define processes for writing of vectors coordinates
     processes = []
     for vector in args.vectors.split(","):
         atom_pair, residue_mode = vector.split("_", 1)
@@ -89,5 +92,14 @@ if __name__ == '__main__':
             )
         )
 
-    test = functools.reduce(operator.or_, processes)
-    tqdm(traj) | test | Run()
+    # get pseudo-trajectory with fix bond length NH and CAHA
+    rCAHA = 1.108  # angstrom
+    rNH = 1.02  # angstrom
+
+    NH_selector = atom_pairs_from_one_residue("N", "H")
+    CAHA_selector = atom_pairs_from_one_residue("CA", ["HA", "HA2", "HA3"])
+
+    # run through trajectory
+    tqdm(traj) | ScaleBonds(pair_selector=NH_selector, bond_length=rNH) \
+    | ScaleBonds(pair_selector=CAHA_selector, bond_length=rCAHA) \
+    | functools.reduce(operator.or_, processes) | Run()

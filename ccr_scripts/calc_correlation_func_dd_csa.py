@@ -49,6 +49,5 @@ if __name__ == '__main__':
 
     calc_and_save_crosscorr(ccr_pairs_csv_files,
                             weights=np.array(CSA_C * (len(ccr_pairs_csv_files))),
-                            bond_length_v1=bond_length_dict[args.dipole],
                             dt_ns=args.dt_ns,
                             out_dir=args.output_directory)
