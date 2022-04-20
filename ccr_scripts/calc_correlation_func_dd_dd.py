@@ -15,18 +15,11 @@ def extract_pairvect_names_from_metadata(meta_vect_1, meta_vect_2, shift_ind):
 
 
 if __name__ == '__main__':
-    rCAHA = 1.108  # angstrom
-    rNH = 1.020  # angstrom
-
-    bond_length_dict = {"N-H": rNH,
-                        "CA-HA|HA2|HA3": rCAHA,
-                        "H-HA|HA2|HA3": None
-                        }
 
     parser = argparse.ArgumentParser(description='Calc DD-DD ccr func')
     parser.add_argument('--path-to-metadata', required=True)
-    parser.add_argument('--dipole-1', required=True, choices=bond_length_dict.keys())
-    parser.add_argument('--dipole-2', required=True, choices=bond_length_dict.keys())
+    parser.add_argument('--dipole-1', required=True, choices=["N-H", "CA-HA|HA2|HA3",  "H-HA|HA2|HA3"])
+    parser.add_argument('--dipole-2', required=True, choices=["N-H", "CA-HA|HA2|HA3",  "H-HA|HA2|HA3"])
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")

@@ -22,30 +22,20 @@ def extract_pairvect_names_from_metadata_csa(meta_vect, path_to_csa_dir, shift_i
 
 
 if __name__ == '__main__':
-    rCAHA = 1.108  # angstrom
-    rNH = 1.020  # angstrom
-
-    bond_length_dict = {"N-H": rNH,
-                        "CA-HA|HA2|HA3": rCAHA,
-                        "HA|HA2|HA3-H": None,
-                        "HA|HA2|HA3-Hp1": None
-                        }
-
     parser = argparse.ArgumentParser(description='Calc DD-CSA ccr func')
     parser.add_argument('--path-to-metadata', required=True)
-    parser.add_argument('--dipole', required=True, choices=bond_length_dict.keys())
+    parser.add_argument('--dipole', required=True, choices=["N-H", "CA-HA|HA2|HA3", "HA|HA2|HA3-H", "HA|HA2|HA3-Hp1"])
     parser.add_argument('--path-to-csa-dir', required=True)
     parser.add_argument('--shift-ind', default=0, type=int)
     parser.add_argument('--dt-ns', default=0.001, type=float)
     parser.add_argument('--output-directory', default=".")
     args = parser.parse_args()
 
-    CSA_C = [244e-6, 178e-6, 90e-6] # Teng et. all 1992
+    CSA_C = [244e-6, 178e-6, 90e-6]  # Teng et. all 1992
 
     meta_vect = pd.read_csv(os.path.join(args.path_to_metadata, f"{vector_name_to_basename(args.dipole)}.csv"))
 
     ccr_pairs_csv_files = extract_pairvect_names_from_metadata_csa(meta_vect, args.path_to_csa_dir, args.shift_ind)
-
 
     calc_and_save_crosscorr(ccr_pairs_csv_files,
                             weights=np.array(CSA_C * (len(ccr_pairs_csv_files))),
